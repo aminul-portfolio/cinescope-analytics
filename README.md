@@ -159,7 +159,7 @@ cinescope/
 
 ## Role Fit
 
-The focus is the data layer — how events are captured, how they are aggregated, and how the results are made useful to a business user. A dashboard like this gives a content or product team direct visibility into what is performing, where users drop off, and whether the underlying data is healthy — without waiting on an ad hoc query. Django is used as infrastructure; the pipeline, schema design, and reporting layer are the point.
+The focus of this project is the data layer — how events are captured, how they are aggregated, and how the results are made useful to a business user. A dashboard like this gives a content or product team direct visibility into what is performing, where users drop off, and whether the underlying data is healthy — without waiting on an ad hoc query. Django is used as infrastructure; the pipeline, schema design, and reporting layer are the main focus.
 
 ---
 
@@ -172,6 +172,26 @@ The focus is the data layer — how events are captured, how they are aggregated
 | Analytics Engineer | Layered analytics design, ETL command, `DailyMetric` aggregation, run logging |
 | Junior Data Engineer | Pipeline design, raw-to-gold transformation, observability via `ETLRunLog` |
 | Data Engineer (Graduate) | End-to-end ownership of a pipeline from event capture to reporting layer |
+
+---
+
+## Ownership Notice
+
+This project was designed and developed by **Aminul Islam Sumon** as part of his professional data analytics and Django portfolio.
+
+Copyright © 2026 Aminul Islam Sumon. All rights reserved.
+
+This repository is shared for portfolio, learning, and review purposes only. No part of this codebase may be copied, redistributed, modified, or used commercially without prior written permission from the author.
+
+---
+
+## Author
+
+**Aminul Islam Sumon**  
+Python Developer | Data Analytics & Django Projects
+
+- GitHub: https://github.com/aminul-portfolio
+- LinkedIn: https://www.linkedin.com/in/aminul-islam-a71a871a2
 
 ---
 
