@@ -20,12 +20,6 @@ This project is designed to demonstrate end-to-end delivery for **Data Analyst /
 
 ## Screenshots
 
-## Screenshots
-
-Screenshots are stored in `images/`.
-
-## Screenshots
-
 | Home                                            | Movie Detail |
 |-------------------------------------------------|-------------|
 | ![Home](images/cinescope_homepage_combined.png) | ![Movie Detail](images/movie_detail.png) |
