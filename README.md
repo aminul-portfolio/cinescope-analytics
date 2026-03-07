@@ -107,8 +107,9 @@ The `build_daily_metrics` management command is the core pipeline job. It aggreg
 
 ```bash
 git clone <repo-url>
-cd cinescope
+cd cinescope-analytics
 python3 -m venv .venv && source .venv/bin/activate
+cd src
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_data
@@ -121,9 +122,10 @@ python manage.py runserver
 
 ```bat
 git clone <repo-url>
-cd cinescope
+cd cinescope-analytics
 python -m venv .venv
 .venv\Scripts\activate
+cd src
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_data
