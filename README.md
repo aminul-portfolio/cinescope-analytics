@@ -117,9 +117,35 @@ cinescope/
 
 ![Home](images/cinescope_homepage_combined.png)
 
-| | |
-|---|---|
-| ![Movie Detail](images/movie_detail.png) | ![Dashboard](images/dasboard.png) |
-| Movie Detail | Analytics Dashboard |
-| ![About](images/about.PNG) | ![Full Walkthrough](images/cinescope_analytics_combined_full.png) |
-| About | Full Walkthrough |
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Analytics Dashboard**
+![Analytics Dashboard](images/dasboard.png)
+
+</td>
+<td width="50%" rowspan="3" valign="top">
+
+**Full Walkthrough**
+![Full Walkthrough](images/cinescope_analytics_combined_full.png)
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+**Movie Detail**
+![Movie Detail](images/movie_detail.png)
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+**About**
+![About](images/about.PNG)
+
+</td>
+</tr>
+</table>
