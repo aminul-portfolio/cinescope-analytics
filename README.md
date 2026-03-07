@@ -27,11 +27,11 @@ This is not a CRUD web app. CineScope is a **data product** — it captures raw 
 
 | | |
 |---|---|
-| ![Movie Detail](images/movie_detail.png) | ![Dashboard](images/dasboard.png) |
+| ![Movie Detail](images/movie_detail.png) |  ![Full Walkthrough](images/cinescope_analytics_combined_full.png) |
 | Movie Detail | Analytics Dashboard |
-| ![About](images/about.PNG) | ![Full Walkthrough](images/cinescope_analytics_combined_full.png) |
+| ![About](images/about.PNG) |
 | About | Full Walkthrough |
-
+![Dashboard](images/dasboard.png) |
 ---
 
 ## Features
