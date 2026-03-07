@@ -20,23 +20,24 @@ This project is designed to demonstrate end-to-end delivery for **Data Analyst /
 
 ## Screenshots
 
-> Screenshots are stored in `src/images/`.
+## Screenshots
+
+Screenshots are stored in `images/`.
 
 - **Home**  
-  ![Home](src/images/cinescope_homepage_combined.png)
+  ![Home](images/cinescope_homepage_combined.png)
 
 - **Movie Detail**  
-  ![Movie Detail](src/images/movie_detail.png)
+  ![Movie Detail](images/movie_detail.png)
 
 - **Analytics Dashboard**  
-  ![Analytics](src/images/dashboard.png)
+  ![Analytics Dashboard](images/dasboard.png)
 
 - **About**  
-  ![About](src/images/about.PNG)
+  ![About](images/about.PNG)
 
 - **Full walkthrough**  
-  ![Full walkthrough](src/images/cinescope_analytics_combined_full.png)
-
+  ![Full walkthrough](images/cinescope_analytics_combined_full.png)
 ---
 
 ## Why this project is hiring-relevant
