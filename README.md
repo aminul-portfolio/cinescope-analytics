@@ -167,7 +167,7 @@ The focus is the data layer — how events are captured, how they are aggregated
 |---|---|
 | Data Analyst | KPI dashboard, funnel analysis, CSV exports, confidence-weighted ranking |
 | BI Developer | Gold-layer consumption pattern, date-range filtering, data quality checks |
-| Analytics Engineer | Medallion schema, ETL command, `DailyMetric` aggregation, run logging |
+| Analytics Engineer | Layered analytics design, ETL command, `DailyMetric` aggregation, run logging |
 | Junior Data Engineer | Pipeline design, raw-to-gold transformation, observability via `ETLRunLog` |
 | Data Engineer (Graduate) | End-to-end ownership of a pipeline from event capture to reporting layer |
 
