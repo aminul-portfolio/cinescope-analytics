@@ -32,8 +32,6 @@ This project is intentionally **not just a CRUD web app**. It is a **data produc
 
 Screenshots are stored in `images/`.
 
-- **Home**  
-  ![Home](images/cinescope_homepage_combined.png)
 
 - **Movie Detail**  
   ![Movie Detail](images/movie_detail.png)
