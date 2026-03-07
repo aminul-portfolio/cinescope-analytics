@@ -10,123 +10,124 @@
 
 ## For Hiring Managers
 
-This is not a CRUD web app. CineScope is a **data product** — it captures raw engagement signals, runs a scheduled ETL pipeline to build a gold aggregates layer, and surfaces the results in a KPI dashboard with CSV exports and ETL observability. Here's what that means for each role:
+This is not a basic CRUD web app. CineScope is a **data product** designed to demonstrate practical capability across **Data Analytics**, **Business Intelligence**, and **Junior Data Engineering** workflows.
+
+It captures raw user engagement signals, transforms them through an ETL process into a gold-layer metrics table, and surfaces those results in a staff analytics dashboard with KPI reporting, CSV exports, and ETL observability.
+
+### What this project proves
 
 **Data Analyst / BI**
-— KPI dashboard with watches, favorites, active users, top movies/genres/categories, and a session-based product funnel (Search → Detail → Watch → Signup). Date range selectors, smart ordering, and CSV exports ready for downstream reporting.
+- Builds a KPI dashboard from product activity data
+- Tracks user behaviour across a session-based funnel: **Search → Detail → Watch → Signup**
+- Supports date filtering, ranked tables, and CSV exports for reporting workflows
+- Applies confidence-aware ranking for top-rated content
 
 **Analytics Engineer / Junior Data Engineer**
-— A real ETL job (`build_daily_metrics` management command) that reads raw event and engagement tables and writes aggregated daily metrics to a `DailyMetric` gold table. Every run is logged to `ETLRunLog` with status, duration, row count, and error messages — surfaced directly on the analytics page.
+- Implements a real ETL command: `build_daily_metrics`
+- Reads from raw activity and engagement tables
+- Writes curated daily aggregates into a gold table: `DailyMetric`
+- Logs pipeline execution into `ETLRunLog` with status, duration, row count, and error visibility
+- Exposes pipeline health directly in the analytics interface
 
-**The interview story in one sentence:**
-> *"Raw events and engagement signals flow into a daily aggregation job, which writes a gold table consumed by a dashboard, with ETL run logging and basic data health checks."*
+### Interview story in one sentence
+
+> *“Raw events and engagement signals flow into a daily aggregation job, which writes a gold table consumed by a dashboard, with ETL run logging and basic data health checks.”*
 
 ---
 
 ## Screenshots
 
-| | |
-|---|---|
-| ![Movie Detail](images/movie_detail.png) | ![Dashboard](images/dasboard.png) |
-| Movie Detail | Analytics Dashboard |
-| ![About](images/about.PNG) | ![Full Walkthrough](images/cinescope_analytics_combined_full.png) |
-| About | Full Walkthrough |
+<table>
+  <tr>
+    <td width="50%" valign="top" align="center">
+      <img src="images/dasboard.png" alt="Analytics Dashboard" width="100%"><br>
+      <b>Analytics Dashboard</b>
+      <br><br>
+
+      <img src="images/movie_detail.png" alt="Movie Detail" width="100%"><br>
+      <b>Movie Detail</b>
+      <br><br>
+
+      <img src="images/about.PNG" alt="About" width="100%"><br>
+      <b>About</b>
+    </td>
+
+    <td width="50%" valign="top" align="center">
+      <img src="images/cinescope_analytics_combined_full.png" alt="Full Walkthrough" width="100%"><br>
+      <b>Full Walkthrough</b>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## Features
+## Core Features
 
-### Movie Discovery
-- Home page with hero slider and curated rows (recent, top-rated, most watched)
-- Full catalog with keyword search across title, cast, description, and genre
-- Filters: category, year, genre, max duration, watch availability
-- Smart result ordering when filters are active: rating → rating count → views → recency
-- Movie detail pages with trailer embed, watch/download links, and related content
+### 1) Movie Discovery Experience
+- Home page with hero slider and curated content rows
+- Recent, top-rated, and most-watched content sections
+- Full movie catalogue with keyword search
+- Search across title, cast, description, and genre
+- Filter options for category, year, genre, duration, and watch availability
+- Smart result ordering when filters are active:
+  - rating
+  - rating count
+  - views
+  - recency
+- Movie detail pages with:
+  - trailer embed
+  - watch/download links
+  - related content recommendations
 
-### Ratings & Comments
-- Per-user ratings (one per movie, updatable) with live AJAX updates across the UI
-- Comment feed with a moderation-ready structure
+### 2) Ratings & User Interaction
+- Per-user rating model: one rating per movie per user
+- Users can update their existing rating later
+- Live AJAX updates across the UI
+- Comment feed structure prepared for moderation workflows
 
-### Staff Analytics Dashboard
-- **Date ranges**: 7 / 30 / 90 days
-- **KPIs**: total views (all-time), watches + favorites (range), active users (7d vs range), watch-available count
-- **Product funnel**: Search → Detail → Watch → Signup (session-based)
-- **Top tables**: top movies by watches, by favorites, and all-time top rated with rating-count confidence weighting
-- **Data health panel**: flags missing posters, missing trailers, movies with no watch links, and unrated movies
-- **CSV exports**: Watches, Favorites, Top Rated
-- **ETL Run Log**: status (success/fail), duration, rows updated, error message, run timestamp
+### 3) Staff Analytics Dashboard
+- Preset date ranges: **7 / 30 / 90 days**
+- KPI cards for:
+  - total views (all-time)
+  - watches in range
+  - favorites in range
+  - active users
+  - watch-available movie count
+- Session-based product funnel:
+  - Search
+  - Detail
+  - Watch
+  - Signup
+- Top tables:
+  - top movies by watches
+  - top movies by favorites
+  - top-rated movies using confidence weighting
+- Data health checks:
+  - missing posters
+  - missing trailers
+  - movies with no watch links
+  - unrated movies
+- CSV exports for:
+  - watches
+  - favorites
+  - top-rated movies
+- Embedded ETL run log with:
+  - success/fail status
+  - duration
+  - rows updated
+  - error messages
+  - run timestamp
 
 ---
 
 ## Data Engineering Pipeline
 
-### Architecture
+### Pipeline Architecture
 
-```
+```text
 Raw Layer                              Gold Layer          Observability
 ──────────────────────────────         ──────────────      ─────────────
 Event (search/detail/watch/signup)                         ETLRunLog
 WatchHistory                      ──▶  DailyMetric    ──▶  (status, duration,
 Favorite                               (daily aggs)        rows, errors)
 MovieRating
-```
-
-### Running the ETL
-
-```bash
-# Yesterday (default)
-python manage.py build_daily_metrics
-
-# Specific day
-python manage.py build_daily_metrics --day 2026-03-07
-
-# Backfill from first available signal to today
-python manage.py build_daily_metrics --backfill
-
-# Custom date range
-python manage.py build_daily_metrics --from 2026-03-01 --to 2026-03-07
-```
-
----
-
-## Getting Started
-
-```bash
-git clone https://github.com/your-username/cinescope-analytics.git
-cd cinescope-analytics/src
-
-pip install -r requirements.txt
-
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-The analytics dashboard is available to staff users at `/analytics/`.
-
----
-
-## Tech Stack
-
-| | |
-|---|---|
-| **Backend** | Python 3.11+, Django 5.x |
-| **Frontend** | Bootstrap 5 (dark SaaS theme), Swiper.js, Chart.js |
-| **Database** | SQLite (local dev) |
-
----
-
-## Project Structure
-
-```
-cinescope-analytics/
-└─ src/
-   ├─ Imdb/        # Django project config (settings, urls, wsgi, asgi)
-   ├─ movie/       # Main app — models, views, templates, analytics, ETL
-   ├─ static/      # CSS, JS, assets
-   ├─ templates/   # Global templates (base.html, etc.)
-   ├─ images/      # README screenshots
-   ├─ media/       # Uploaded images (local dev only, gitignored)
-   ├─ manage.py
-   └─ requirements.txt
-```
