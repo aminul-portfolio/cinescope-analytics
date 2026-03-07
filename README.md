@@ -147,11 +147,21 @@ cinescope/
 
 ## Role Fit
 
-This project was built to reflect the day-to-day work in analytics and data engineering roles — not to demonstrate web development ability. The focus is on the data layer: how events are captured, how they are aggregated, and how the results are made useful to a business user.
+This project was built to reflect the day-to-day work in analytics and data engineering — not to demonstrate web development ability. The focus is the data layer: how events are captured, how they are aggregated, and how the results are made useful to a business user. A dashboard like this gives a content or product team direct visibility into what is performing, where users drop off, and whether the data feeding those answers is healthy — without waiting on an ad hoc query.
 
-The stack is deliberately simple. Django is used as infrastructure, not the point. The point is the pipeline, the schema design, and the reporting layer — which maps directly to the work done in tools like dbt, Airflow, or a warehouse SQL layer in a professional environment.
+Django is used as infrastructure, not the point. The pipeline, schema design, and reporting layer map directly to work done in tools like dbt, Airflow, or a warehouse SQL layer in a professional environment.
 
-If you are hiring for a role that involves building or maintaining data pipelines, writing analytical SQL, producing dashboards from activity data, or owning data quality — this project is intended to show that I can do that work from first principles.
+---
+
+## Best Role Fit
+
+| Role | Why this project is relevant |
+|---|---|
+| Data Analyst | KPI dashboard, funnel analysis, CSV exports, confidence-weighted ranking |
+| BI Developer | Gold-layer consumption pattern, date-range filtering, data quality checks |
+| Analytics Engineer | Medallion schema, ETL command, `DailyMetric` aggregation, run logging |
+| Junior Data Engineer | Pipeline design, raw-to-gold transformation, observability via `ETLRunLog` |
+| Data Engineer (Graduate) | End-to-end ownership of a pipeline from event capture to reporting layer |
 
 ---
 
@@ -164,7 +174,7 @@ If you are hiring for a role that involves building or maintaining data pipeline
 <td width="50%" valign="top">
 
 **Analytics Dashboard**
-![Analytics Dashboard](images/dasboard.png)
+![Analytics Dashboard](images/dashboard.png)
 
 </td>
 <td width="50%" rowspan="3" valign="top">
