@@ -115,8 +115,11 @@ cinescope/
 
 ## Screenshots
 
-| Analytics Dashboard | Movie Detail |
-|---|---|
-| ![Dashboard](images/dasboard.png) | ![Movie Detail](images/movie_detail.png) |
+![Home](images/cinescope_homepage_combined.png)
 
-![Full Walkthrough](images/cinescope_analytics_combined_full.png)
+| | |
+|---|---|
+| ![Movie Detail](images/movie_detail.png) | ![Dashboard](images/dasboard.png) |
+| Movie Detail | Analytics Dashboard |
+| ![About](images/about.PNG) | ![Full Walkthrough](images/cinescope_analytics_combined_full.png) |
+| About | Full Walkthrough |
