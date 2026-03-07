@@ -48,7 +48,7 @@ It captures raw user engagement signals, transforms them through an ETL process 
       <b>Movie Detail</b>
       <br><br>
 
-      <img src="images/about.PNG" alt="About" width="100%"><br>
+      <img src="images/about.png" alt="About" width="100%"><br>
       <b>About</b>
     </td>
 
