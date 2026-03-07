@@ -182,7 +182,7 @@ The focus is the data layer — how events are captured, how they are aggregated
 <td width="50%" valign="top">
 
 **Analytics Dashboard**
-![Analytics Dashboard](images/dashboard.png)
+![Analytics Dashboard](images/dasboard.png)
 
 </td>
 <td width="50%" rowspan="3" valign="top">
