@@ -151,7 +151,9 @@ cinescope/
 
 ## Interview Story
 
-> *"I built an event capture layer that logs every search, detail view, watch, and signup. A daily management command reads those raw tables, aggregates them into a gold-layer metrics table, and logs each run's status and duration. A staff dashboard consumes that gold table to show KPIs, a session funnel, ranked content, and data quality flags — with CSV export for anything that needs to go into a report. The whole thing mirrors what you'd do with dbt, Airflow, and a warehouse, just in a single Django project."*
+## Interview Story
+
+> *"I built an event capture layer that logs search, detail, watch, and signup activity. A daily management command aggregates those raw tables into a gold-layer metrics table and logs each run's status and duration. A staff dashboard consumes that layer to show KPIs, a session funnel, ranked content, data quality flags, and CSV exports — mirroring the kind of workflow you'd usually implement with dbt, Airflow, and a warehouse."*
 
 ---
 
