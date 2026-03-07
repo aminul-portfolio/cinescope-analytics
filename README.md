@@ -1,123 +1,146 @@
-# CineScope Analytics — Movie Discovery + Product Analytics + Mini ETL (Django)
+# CineScope Analytics — Movie Discovery + Product Analytics (Django)
 
-A **SaaS-style movie discovery platform** built with **Django** that combines a polished user experience (search, filters, ratings, comments) with a **staff-only analytics dashboard** and a **Data Engineering mini-pipeline**:
+> **SaaS-style movie discovery platform** with **staff analytics**, **event tracking**, and a **Data Engineering mini-pipeline** — built with Django.  
+> **Raw events → ETL → Gold layer → Dashboard + Exports + Observability**
 
-**raw events → ETL (DailyMetric “gold layer”) → dashboard + exports + ETL run log**
-
-This project is designed to demonstrate end-to-end delivery for **Data Analyst / Analytics Engineer / Junior Data Engineer** roles — not just a CRUD website.
+![Home](images/cinescope_homepage_combined.png)
 
 ---
 
-## Recruiter TL;DR (60 seconds)
+## Hiring Summary (DA + DE Focus)
 
-- **User product**: movie catalog + smart search/filters + watch availability cues
-- **Engagement signals**: event tracking + watch history + favorites + per-user ratings + comments
-- **Analytics**: staff-only dashboard with KPIs, funnel, top tables, data quality panel
-- **Data Engineering proof**: ETL command creates **DailyMetric gold table** + **ETLRunLog observability**
-- **Exports**: CSV exports for enterprise-style reporting workflows
+This project is intentionally **not just a CRUD web app**. It is a **data product** that demonstrates:
+
+### ✅ Data Analyst / BI Outcomes
+- **KPI dashboard**: watches, favorites, active users, top categories/genres/movies
+- **Product funnel** (session-based): **Search → Detail → Watch → Signup**
+- **Smart ordering**: top-rated results surface first when filtering/searching
+- **CSV exports** for reporting workflows (top watches / favorites / top rated)
+
+### ✅ Data Engineer / Analytics Engineer Outcomes
+- **Raw event capture** (fact-style tracking via `Event`)
+- **ETL job** (Django management command) builds a **gold table**: `DailyMetric`
+- **ETL observability** via `ETLRunLog` (status, duration, rows updated, error message) surfaced in the dashboard
+- **Raw vs ETL trend** pattern (operational analytics): dashboard shows both raw-series and ETL-series
+
+**DE story you can tell in interviews:**  
+> “Built a small analytics pipeline: raw events and engagement signals → daily aggregates (gold layer) → dashboard + exports, with ETL logging and basic freshness checks.”
 
 ---
 
 ## Screenshots
 
-| Home                                            | Movie Detail |
-|-------------------------------------------------|-------------|
-| ![Home](images/cinescope_homepage_combined.png) | ![Movie Detail](images/movie_detail.png) |
+Screenshots are stored in `images/`.
 
-| Analytics Dashboard | About |
-|---------------------|-------|
-| ![Dashboard](images/dashboard.png) | ![About](images/about.PNG) |
+- **Home**  
+  ![Home](images/cinescope_homepage_combined.png)
 
+- **Movie Detail**  
+  ![Movie Detail](images/movie_detail.png)
+
+- **Analytics Dashboard**  
+  ![Analytics Dashboard](images/dasboard.png)
+
+- **About**  
+  ![About](images/about.PNG)
 
 - **Full walkthrough**  
   ![Full walkthrough](images/cinescope_analytics_combined_full.png)
----
-
-## Why this project is hiring-relevant
-
-### ✅ Data Analyst / BI
-- KPI-driven dashboard: watches, favorites, active users, top categories/genres/movies
-- Funnel metrics (search → detail → watch → signup) for product decision-making
-- CSV exports for reporting workflows
-
-### ✅ Analytics Engineer / Junior Data Engineer
-- Event tracking + fact-style data capture
-- **ETL job (management command)** builds daily aggregates into `DailyMetric` (gold table)
-- **ETL observability**: run logs (success/fail, duration, rows updated) shown in the dashboard
-- “Raw vs ETL” trend chart comparison (operational analytics pattern)
-
-### ✅ Data Scientist (supporting)
-- Produces clean, structured signals and aggregates suitable for future ML features (recommendation, ranking, cohorting)
-- Not positioned as an ML-heavy project (no fake claims)
 
 ---
 
-## Key Features
+## What the App Does
 
-### 🎬 Movie Discovery (User-facing)
-- Modern home page with hero slider + curated sections
-- Movie catalog with:
+### Movie Discovery (User-facing)
+- Home page with **hero slider** + curated rows (recent/top/most watched)
+- Catalog with:
   - Keyword search across **title, cast, description, genre**
   - Filters: **category, year, genre, max duration, watch availability**
-  - **Smart ordering**: top-rated first when filtering/searching
-- Movie detail page:
-  - Trailer embed
+  - **Smart ordering**: when filters/search are active, results prioritize:
+    1) rating  
+    2) rating count  
+    3) views  
+    4) recency
+- Movie detail:
+  - Trailer embed (if provided)
   - Watch/download links
   - Related + recommended content
 
-### ⭐ Ratings + 💬 Comments
-- **Per-user rating**: one rating per user per movie; users can update
-- Live rating updates (AJAX) across UI
-- SaaS-style comment feed and comment form (moderation-ready)
+### Ratings + Comments (Engagement signals)
+- **Per-user rating**: one rating per user per movie (update allowed)
+- Rating aggregates update across UI + analytics
+- **Comment feed** + SaaS-style comment form (moderation-ready)
 
-### 📊 Staff Analytics Dashboard
+### Staff Analytics Dashboard (Manager / Analyst view)
 - Date ranges: **7 / 30 / 90 days**
 - KPIs:
-  - Total views
-  - Watches + favorites (range)
+  - Total views (all time)
+  - Watches + favorites (selected range)
   - Active users (7d vs selected range)
   - Watch-available count
 - Funnel (session-based):
   - Search → Detail → Watch → Signup
 - Top tables:
-  - Top movies by watches
-  - Top movies by favorites
-  - Top rated (all-time; rating + rating_count confidence)
+  - Top movies by watches (range)
+  - Top movies by favorites (range)
+  - Top rated (all-time, with rating-count confidence)
 - Data health panel:
   - Missing posters, missing trailers
   - No watch links
   - Unrated movies
-- **CSV exports**:
+- **CSV exports** (enterprise reporting):
   - Watches CSV, Favorites CSV, Top Rated CSV
-
-### 🏗️ Data Engineering Mini-Pipeline (ETL)
-- Management command: `build_daily_metrics`
-- Builds daily aggregated metrics into `DailyMetric` (gold layer)
-- Backfill support
-- **ETLRunLog** stored in DB and displayed on analytics page (enterprise observability)
+- **ETL Run Log** (operations):
+  - Status (success/fail), duration, rows, error message, time started
 
 ---
 
-## Tech Stack
-- **Python 3.11+**
-- **Django 5.x**
-- Bootstrap 5 (dark SaaS skin)
-- Swiper.js (hero slider)
-- Chart.js (analytics charts)
-- SQLite (local dev)
+## Data Engineering Mini-Pipeline (ETL)
 
----
+### Data flow
+- **Raw layer (events + engagement signals)**:
+  - `Event` (search/detail/watch/signup)
+  - `WatchHistory`, `Favorite`, `MovieRating`
+- **Gold layer**:
+  - `DailyMetric` (daily aggregates for dashboard + future BI)
+- **Observability**:
+  - `ETLRunLog` tracks every run: duration, rows updated, status, error
 
-## Project Structure (high level)
+### Run ETL
+```bash
+# Build metrics for yesterday (default behavior)
+python manage.py build_daily_metrics
 
-```text
+# Build metrics for a specific day
+python manage.py build_daily_metrics --day 2026-03-07
+
+# Backfill from first available signal date to today
+python manage.py build_daily_metrics --backfill
+
+# Custom range
+python manage.py build_daily_metrics --from 2026-03-01 --to 2026-03-07
+
+Tech Stack
+
+Python 3.11+
+
+Django 5.x
+
+Bootstrap 5 (dark SaaS theme)
+
+Swiper.js (hero slider)
+
+Chart.js (analytics charts)
+
+SQLite (local development)
+
 cinescope-analytics/
 └─ src/
-   ├─ Imdb/            # Django project config (settings/urls/wsgi/asgi)
-   ├─ movie/           # Main app (models, views, templates, analytics, ETL)
-   ├─ static/          # Static assets (CSS/JS/images)
-   ├─ templates/       # Global templates (base.html etc.) if used
-   ├─ images/          # README screenshots (committed)
-   ├─ media/           # Uploaded images (local dev only; gitignored)
+   ├─ Imdb/          # Django project config (settings/urls/wsgi/asgi)
+   ├─ movie/         # Main app (models, views, templates, analytics, ETL)
+   ├─ static/        # CSS/JS/assets
+   ├─ templates/     # Global templates (base.html etc.)
+   ├─ images/        # README screenshots
+   ├─ media/         # Uploaded images (local dev; gitignored)
    ├─ manage.py
    └─ requirements.txt
