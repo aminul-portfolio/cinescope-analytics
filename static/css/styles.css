@@ -1,325 +1,347 @@
+/* =========================================================
+   CineScope Analytics — SaaS / Enterprise UI Skin
+   ========================================================= */
 
-/* ✅ Global Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #121212;
-  color: #f0f0f0;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-a {
-  color: inherit;
-  text-decoration: none;
-}
-ul {
-  list-style: none;
+/* ---------- Design tokens ---------- */
+:root{
+  --bg: #0b1220;
+  --bg2: #0f172a;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.10);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.70);
+  --shadow: 0 14px 40px rgba(0,0,0,0.45);
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.30);
+  --radius: 18px;
+  --radius-sm: 14px;
 }
 
-/* ✅ Header and Navigation */
-.header {
-  background-color: #1a1a1a;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-.logo img {
-  height: 50px;
-}
-.menu ul {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.menu ul li a {
-  padding: 8px 14px;
-  font-weight: 500;
-  color: #fff;
-  display: block;
-  transition: background 0.3s;
-}
-.menu ul li a:hover,
-.menu ul li a.active {
-  background-color: #333;
-  border-radius: 5px;
-}
-.toggle {
-  display: none;
-  cursor: pointer;
-}
-.toggle img {
-  height: 30px;
-}
-@media (max-width: 768px) {
-  .menu ul {
-    flex-direction: column;
-    display: none;
-    background: #111;
-    width: 100%;
-  }
-  .menu ul.show {
-    display: flex;
-  }
+/* ---------- Page base ---------- */
+.app-body{
+  background: radial-gradient(1200px 600px at 15% 0%, rgba(59,130,246,0.16), transparent 60%),
+              radial-gradient(900px 500px at 85% 10%, rgba(236,72,153,0.12), transparent 55%),
+              linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+  color: var(--text);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* ✅ Movie Slider & Cards */
-.movie-horizontal-scroll {
-  overflow-x: auto;
-  padding: 20px 0;
-  background-color: #121212;
-  border-radius: 8px;
-  scroll-behavior: smooth;
+.main-wrap{
+  padding: 22px 0 40px;
+}
+
+a{ text-decoration: none; }
+a:hover{ text-decoration: none; }
+
+/* ---------- Navbar (SaaS glass) ---------- */
+.navbar-saas{
+  background: rgba(11,18,32,0.72);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.brand-text{
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.brand-badge{
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.82);
+}
+
+.navbar-saas .nav-link{
+  color: rgba(255,255,255,0.80);
+  font-weight: 550;
+  margin: 0 4px;
+}
+
+.navbar-saas .nav-link:hover,
+.navbar-saas .nav-link.active{
+  color: rgba(255,255,255,0.98);
+}
+
+.dropdown-saas{
+  background: rgba(15,23,42,0.98);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: var(--shadow);
+}
+
+.dropdown-saas .dropdown-item{
+  color: rgba(255,255,255,0.86);
+}
+
+.dropdown-saas .dropdown-item:hover{
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.98);
+}
+
+.nav-user{
+  color: rgba(255,255,255,0.78);
+  font-size: 14px;
+}
+
+.nav-btn{
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+
+.nav-cta{
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 700;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Search */
+.nav-search-wrap{
+  gap: 8px;
+}
+
+.nav-search{
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.92) !important;
+  min-width: 240px;
+}
+
+.nav-search::placeholder{
+  color: rgba(255,255,255,0.55) !important;
+}
+
+.nav-search-btn{
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: rgba(255,255,255,0.92);
+  padding: 7px 14px;
+}
+
+.nav-search-btn:hover{
+  background: rgba(255,255,255,0.18);
+}
+
+/* ---------- Hero Slider (full width + full height) ---------- */
+/* Use this on homepage container: <section class="homeslider"> ... swiper ... </section> */
+.homeslider{
+  width: 100%;
+  height: clamp(420px, 75vh, 760px);
   position: relative;
-}
-.scroll-wrapper {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 1rem;
-  padding-left: 1rem;
-}
-.movie-card {
-  flex: 0 0 auto;
-  width: 200px;
-  background-color: #1a1a1a;
-  padding: 10px;
-  border-radius: 6px;
-  transition: transform 0.3s;
-}
-.movie-card:hover {
-  transform: scale(1.05);
-}
-.movie-poster {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-/* ✅ Unified Scroll Button Styles */
-.scroll-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
-  border: none;
-  padding: 8px;
-  width: 40px;
-  height: 60px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  border-radius: 50%;
-  opacity: 0.8;
-}
-.scroll-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-.left-btn { left: 0.5rem; }
-.right-btn { right: 0.5rem; }
-
-/* ✅ Section Styles */
-.panel {
-  padding: 20px;
-  background-color: #181818;
-  border-radius: 10px;
-}
-.panel h2 {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #fff;
-}
-.panel .d-flex {
-  margin-bottom: 1rem;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-  gap: 1rem;
-}
-.panel .d-flex > div {
-  flex: 0 0 auto;
-  min-width: 180px;
-}
-
-/* ✅ Swiper Hero Header */
-.homeslider {
-  width: 100%;
-  height: 220px;
   overflow: hidden;
-  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   background: #000;
 }
-.homeslider .swiper-slide img {
+/* Hero caption overlay */
+.hero-caption{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  z-index: 5;
+  color: rgba(255,255,255,0.95);
+}
+
+.hero-title{
+  font-size: clamp(28px, 3.2vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 10px 0 12px;
+  max-width: 20ch;
+}
+
+.hero-subtitle{
+  margin: 0 0 16px;
+  max-width: 72ch;
+}
+
+.hero-pill-row{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(10px);
+  font-size: 13px;
+}
+
+.hero-cta{
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 10px 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+
+@media (max-width: 768px){
+  .hero-caption{ bottom: 18px; padding: 0 14px; }
+  .hero-title{ max-width: 26ch; }
+}
+/* Ensure Swiper uses the full container height */
+.homeslider .swiper-wrapper,
+.homeslider .swiper-slide{
+  height: 100%;
+}
+
+.homeslider .swiper-slide img{
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 0;
-}
-.swiper-button-next, .swiper-button-prev {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 10px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.swiper-button-next:hover, .swiper-button-prev:hover {
-  background: rgba(255, 255, 255, 0.3);
+  object-fit: cover;       /* key: full size without distortion */
+  object-position: center;
+  display: block;
+  transform: scale(1.02);
 }
 
-/* ✅ Footer */
-.footer {
-  background-color: #1a1a1a;
-  color: #aaa;
-  padding: 20px;
-  text-align: center;
-}
-.footer a:hover {
-  text-decoration: underline;
-  color: #0d6efd;
-}
-
-/* ✅ Utility */
-.badge {
-  font-size: 0.75rem;
-  padding: 3px 6px;
-  margin: 2px;
-  border-radius: 5px;
-}
-.hometitle {
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 12px;
-  text-align: center;
+/* Premium gradient overlay */
+.homeslider::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(11,18,32,0.82) 0%, rgba(11,18,32,0.25) 55%, rgba(11,18,32,0.12) 100%),
+    linear-gradient(0deg, rgba(11,18,32,0.55) 0%, rgba(11,18,32,0.05) 40%, rgba(11,18,32,0.35) 100%);
+  pointer-events: none;
 }
 
-/* ✅ Trailer Responsive Wrapper */
-.video-wrapper iframe {
+/* Swiper controls */
+.homeslider .swiper-button-prev,
+.homeslider .swiper-button-next{
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.40);
+  border: 1px solid rgba(255,255,255,0.20);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-soft);
+}
+
+.homeslider .swiper-button-prev:after,
+.homeslider .swiper-button-next:after{
+  font-size: 16px;
+  color: rgba(255,255,255,0.96);
+}
+
+.homeslider .swiper-pagination-bullet{
+  background: rgba(255,255,255,0.70);
+  opacity: 0.7;
+}
+.homeslider .swiper-pagination-bullet-active{
+  opacity: 1;
+}
+
+@media (max-width: 768px){
+  .homeslider{ height: clamp(320px, 55vh, 520px); }
+  .nav-search{ min-width: 160px; }
+}
+
+/* ---------- Cards / grids / sections ---------- */
+.section-title{
+  font-size: clamp(18px, 1.7vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 16px 0 12px;
+}
+
+.card,
+.movie-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.card .card-body{
+  color: var(--text);
+}
+
+/* Movie cards */
+.movie-card img{
   width: 100%;
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 10px;
+  height: 220px;
+  object-fit: cover;
+  display: block;
 }
-.swiper-button-next,
-.swiper-button-prev {
-  z-index: 10;
+
+.movie-card .movie-title{
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.movie-card .movie-meta{
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Buttons */
+.btn{
+  border-radius: 14px;
+}
+
+.btn-primary{
+  box-shadow: var(--shadow-soft);
+}
+
+/* ---------- Horizontal scroll row (if you use it) ---------- */
+.movie-horizontal-scroll{
+  position: relative;
+  margin: 16px 0 24px;
+}
+
+.scroll-wrapper{
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 8px 4px 14px;
+  scroll-behavior: smooth;
+}
+
+.scroll-wrapper::-webkit-scrollbar{
+  height: 8px;
+}
+.scroll-wrapper::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+}
+
+.scroll-btn{
   position: absolute;
-  top: 50%;
+  top: 40%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 10px;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.40);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  place-items: center;
+  z-index: 5;
 }
 
-.swiper-button-next:hover,
-.swiper-button-prev:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-.movie-card small,
-.movie-card h6 {
-  color: #f5f5f5 !important;
-}
-.movie-card h6,
-.movie-card p {
-  color: #f8f9fa !important;
+.scroll-btn.left{ left: -10px; }
+.scroll-btn.right{ right: -10px; }
+
+.scroll-btn:hover{
+  background: rgba(0,0,0,0.55);
 }
 
-.movie-card .badge {
-  font-size: 0.75rem;
-  padding: 3px 6px;
-  margin: 2px;
-  border-radius: 4px;
-}
-.movie-horizontal-scroll {
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 1rem;
-  position: relative;
-}
-
-.scroll-wrapper {
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-.movie-card img {
-  height: 300px;
-  object-fit: cover;
-}
-
-.scroll-btn {
-  position: absolute;
-  top: 40%;
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  border: none;
-}
-
-.left-btn {
-  left: -20px;
-}
-
-.right-btn {
-  right: -20px;
-}
-
-@media (max-width: 768px) {
-  .movie-card img {
-    height: 250px;
-  }
-}
-.movie-horizontal-scroll {
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 1rem;
-  position: relative;
-}
-
-.scroll-wrapper {
-  display: flex;
-  flex-wrap: nowrap;
-}
-
-.movie-card img {
-  height: 300px;
-  object-fit: cover;
-}
-
-.scroll-btn {
-  position: absolute;
-  top: 40%;
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  border: none;
-}
-
-.left-btn {
-  left: -20px;
-}
-
-.right-btn {
-  right: -20px;
-}
-
-@media (max-width: 768px) {
-  .movie-card img {
-    height: 250px;
-  }
+/* ---------- Footer ---------- */
+.footer-saas{
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(11,18,32,0.60);
 }

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search | CineScope Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-2">Search</div>
+      <h1 class="mb-1" style="font-weight:900; letter-spacing:-0.02em;">Results</h1>
+      <p class="text-muted mb-0">
+        {% if request.GET.query %}
+          Showing results for <strong>"{{ request.GET.query }}"</strong>
+        {% else %}
+          Enter a keyword to search by title, cast, or description.
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Search again (keeps recruiter-friendly UX) -->
+    <form class="d-flex nav-search-wrap" method="GET" action="{% url 'movie:movie_search' %}">
+      <input class="form-control nav-search" type="search" name="query" placeholder="Search movies..."
+             aria-label="Search" value="{{ request.GET.query|default:'' }}">
+      <button class="btn nav-search-btn" type="submit">Search</button>
+    </form>
+  </div>
+
+  {% if object_list %}
+    <div class="row g-3">
+      {% for movie in object_list %}
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="movie-card p-2 h-100">
+            <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+              <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                   onerror="this.src='{% static 'img/placeholder.png' %}'">
+
+              <div class="p-2">
+                <h6 class="text-light mb-1 movie-title text-truncate" title="{{ movie.title }}">
+                  {{ movie.title }}
+                </h6>
+                <div class="text-muted small movie-meta">
+                  {{ movie.category|title }} • {{ movie.year_of_production|date:"Y" }}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <span class="badge bg-warning text-dark">⭐ {{ movie.rating }}/10</span>
+                  <span class="btn btn-sm btn-outline-light nav-btn">View</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="card p-4 text-center">
+      <h4 class="mb-2" style="font-weight:800;">No results found</h4>
+      <div class="text-muted mb-3">
+        {% if request.GET.query %}
+          Try another keyword, or browse by category/year.
+        {% else %}
+          Type something in the search box to begin.
+        {% endif %}
+      </div>
+      <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Browse movies</a>
+        <a href="{% url 'home' %}" class="btn btn-warning nav-cta">Back to landing</a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
