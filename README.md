@@ -151,8 +151,6 @@ cinescope/
 
 ## Interview Story
 
-## Interview Story
-
 > *"I built an event capture layer that logs search, detail, watch, and signup activity. A daily management command aggregates those raw tables into a gold-layer metrics table and logs each run's status and duration. A staff dashboard consumes that layer to show KPIs, a session funnel, ranked content, data quality flags, and CSV exports — mirroring the kind of workflow you'd usually implement with dbt, Airflow, and a warehouse."*
 
 ---
