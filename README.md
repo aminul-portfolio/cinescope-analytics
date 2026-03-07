@@ -27,7 +27,7 @@ The project is structured around a pattern common in analytics engineering: raw 
 - `build_daily_metrics` ETL command reads from raw activity and engagement tables and writes aggregated daily records to a gold table (`DailyMetric`)
 - `ETLRunLog` records each run's status, duration, row count, and any error output — queryable, not just logged to console
 - Pipeline health is visible within the analytics interface itself
-- Schema separates raw, intermediate, and gold layers — consistent with a medallion architecture pattern
+- Schema separates raw activity data from aggregated reporting output, following a layered analytics design pattern.
 
 ---
 
@@ -182,7 +182,7 @@ The focus is the data layer — how events are captured, how they are aggregated
 <td width="50%" valign="top">
 
 **Analytics Dashboard**
-![Analytics Dashboard](images/dasboard.png)
+![Analytics Dashboard](images/dashboard.png)
 
 </td>
 <td width="50%" rowspan="3" valign="top">
