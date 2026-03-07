@@ -89,11 +89,15 @@ The `build_daily_metrics` management command is the core pipeline job. It aggreg
 
 ## Tech Stack
 
-- **Backend:** Django, Python
-- **Database:** SQLite (development) — swap to PostgreSQL for production
-- **Frontend:** Bootstrap, AJAX for live rating updates
-- **Pipeline:** Django management command (`build_daily_metrics`)
-- **Exports:** CSV via Django's `StreamingHttpResponse`
+| Layer | Technology | Notes |
+|---|---|---|
+| Backend | Python 3, Django 4 | ORM used for all queries; no raw SQL required by the framework but used selectively for aggregations |
+| Database | SQLite (dev) / PostgreSQL (prod) | Schema designed for easy swap via `DATABASE_URL` |
+| Pipeline | Django management command | `build_daily_metrics` — daily grain, upsert pattern, ETL run logging |
+| Aggregation | Django ORM + `annotate` / `values` | `Count`, `Avg`, `F`, `Case/When` used across KPI and ranking queries |
+| Ranking | Wilson score lower bound | Confidence-weighted rating to avoid bias toward low-volume titles |
+| Exports | Python `csv` module + `StreamingHttpResponse` | Memory-safe for large result sets |
+| Frontend | Bootstrap 5, vanilla JS fetch (AJAX) | Rating updates without page reload |
 
 ---
 
@@ -145,11 +149,15 @@ cinescope/
 
 ---
 
+## Interview Story
+
+> *"I built an event capture layer that logs every search, detail view, watch, and signup. A daily management command reads those raw tables, aggregates them into a gold-layer metrics table, and logs each run's status and duration. A staff dashboard consumes that gold table to show KPIs, a session funnel, ranked content, and data quality flags — with CSV export for anything that needs to go into a report. The whole thing mirrors what you'd do with dbt, Airflow, and a warehouse, just in a single Django project."*
+
+---
+
 ## Role Fit
 
-This project was built to reflect the day-to-day work in analytics and data engineering — not to demonstrate web development ability. The focus is the data layer: how events are captured, how they are aggregated, and how the results are made useful to a business user. A dashboard like this gives a content or product team direct visibility into what is performing, where users drop off, and whether the data feeding those answers is healthy — without waiting on an ad hoc query.
-
-Django is used as infrastructure, not the point. The pipeline, schema design, and reporting layer map directly to work done in tools like dbt, Airflow, or a warehouse SQL layer in a professional environment.
+The focus is the data layer — how events are captured, how they are aggregated, and how the results are made useful to a business user. A dashboard like this gives a content or product team direct visibility into what is performing, where users drop off, and whether the underlying data is healthy — without waiting on an ad hoc query. Django is used as infrastructure; the pipeline, schema design, and reporting layer are the point.
 
 ---
 
