@@ -4,7 +4,7 @@
 
 **Raw events → ETL → Gold layer → Dashboard + Exports**
 
-![Home](src/images/cinescope_homepage_combined.png)
+![Home](images/cinescope_homepage_combined.png)
 
 ---
 
@@ -16,8 +16,8 @@ CineScope is a full-stack Django project that goes beyond a standard CRUD app. I
 
 ## Screenshots
 
-| Home | Movie Detail |
-|------|-------------|
+| Home                                            | Movie Detail |
+|-------------------------------------------------|-------------|
 | ![Home](images/cinescope_homepage_combined.png) | ![Movie Detail](images/movie_detail.png) |
 
 | Analytics Dashboard | About |
