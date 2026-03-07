@@ -1,109 +1,129 @@
-# 🎬 Aminul Movie Site (IMDB Clone)
+# CineScope Analytics — Movie Discovery + Product Analytics + Mini ETL (Django)
 
-A professional movie web application built with **Django**, featuring Swiper sliders, dynamic filtering, pagination, user authentication, and more. This project replicates core features of IMDB, tailored for portfolio demonstration and future scalability.
+A **SaaS-style movie discovery platform** built with **Django** that combines a polished user experience (search, filters, ratings, comments) with a **staff-only analytics dashboard** and a **Data Engineering mini-pipeline**:
 
----
+**raw events → ETL (DailyMetric “gold layer”) → dashboard + exports + ETL run log**
 
-## 🚀 Features
-
-- 🎥 Movie listing by genre, language, and release year
-- 🔍 Search & filter with pagination
-- 👤 User Authentication (Sign Up, Login, Logout)
-- 🔐 Password Reset via Email with HTML template
-- 🎞️ Movie Detail Page
-- 🖼️ Swiper Slider for featured movies
-- 📅 Archive view by year
-- 🌐 Fully responsive layout (HTML + CSS)
-- 📬 Custom password reset email template with button
+This project is designed to demonstrate end-to-end delivery for **Data Analyst / Analytics Engineer / Junior Data Engineer** roles — not just a CRUD website.
 
 ---
 
-## 📸 Screenshots
+## Recruiter TL;DR (60 seconds)
 
-### 🏠 Home Page
-![Home](images/home.jpg)
-
-### 🔐 Login Page
-![Login](images/login.jpg)
-
-### 🎬 Movie Detail Page
-![Movie Detail](images/movie-detail.jpg)
+- **User product**: movie catalog + smart search/filters + watch availability cues
+- **Engagement signals**: event tracking + watch history + favorites + per-user ratings + comments
+- **Analytics**: staff-only dashboard with KPIs, funnel, top tables, data quality panel
+- **Data Engineering proof**: ETL command creates **DailyMetric gold table** + **ETLRunLog observability**
+- **Exports**: CSV exports for enterprise-style reporting workflows
 
 ---
 
-## 📁 Project Structure
+## Screenshots
 
-src/
-├── movie/                  # 🎬 Main Django app (views, models, URLs, forms)
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
-├── templates/              # 🎨 HTML templates
-│   ├── base.html           # Common layout
-│   ├── home.html
-│   ├── movie_detail.html
-│   ├── movie_list.html
-│   ├── movie_archive_year.html
-│   └── registration/       # 🔐 Auth-related templates
-│       ├── login.html
-│       ├── logout.html
-│       ├── signup.html
-│       ├── password_reset_form.html
-│       ├── password_reset_done.html
-│       ├── password_reset_confirm.html
-│       ├── password_reset_complete.html
-│       └── password_reset_email.html
-│
-├── static/                 # ⚙️ Static files (CSS, JS, Images)
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── main.js
-│   └── swiper/             # Optional Swiper slider files
-│       ├── swiper-bundle.min.js
-│       └── swiper-bundle.min.css
-│
-├── images/                 # 🖼️ Screenshots for GitHub README
-│   ├── home.png
-│   ├── movie_detail.png
-│   └── login_page.png
-│
-├── db.sqlite3              # 🗄️ SQLite database file (gitignored)
-├── requirements.txt        # 📦 Python dependencies
-├── .gitignore              # 🚫 Files to ignore in Git
-└── README.md               # 📘 Project documentation
+> Screenshots are stored in `src/images/`.
 
+- **Home**  
+  ![Home](src/images/cinescope_homepage_combined.png)
 
-## 📦 Requirements
+- **Movie Detail**  
+  ![Movie Detail](src/images/movie_detail.png)
 
-Make sure to activate your virtual environment first:
+- **Analytics Dashboard**  
+  ![Analytics](src/images/dashboard.png)
 
-```bash
-# On Windows
-.\env\Scripts\activate
+- **About**  
+  ![About](src/images/about.PNG)
 
-cd src
-python manage.py runserver
+- **Full walkthrough**  
+  ![Full walkthrough](src/images/cinescope_analytics_combined_full.png)
 
-🛠️ Tech Stack
-Python 3.12
+---
 
-Django 5.2
+## Why this project is hiring-relevant
 
-HTML5 / CSS3 / Bootstrap
+### ✅ Data Analyst / BI
+- KPI-driven dashboard: watches, favorites, active users, top categories/genres/movies
+- Funnel metrics (search → detail → watch → signup) for product decision-making
+- CSV exports for reporting workflows
 
-SwiperJS
+### ✅ Analytics Engineer / Junior Data Engineer
+- Event tracking + fact-style data capture
+- **ETL job (management command)** builds daily aggregates into `DailyMetric` (gold table)
+- **ETL observability**: run logs (success/fail, duration, rows updated) shown in the dashboard
+- “Raw vs ETL” trend chart comparison (operational analytics pattern)
 
-Email Backend (console/email HTML)
+### ✅ Data Scientist (supporting)
+- Produces clean, structured signals and aggregates suitable for future ML features (recommendation, ranking, cohorting)
+- Not positioned as an ML-heavy project (no fake claims)
 
-SQLite3 (default)
+---
 
-👤 Author
-Aminul Islam Sumon
-🔗 GitHub: aminul-portfolio
+## Key Features
 
+### 🎬 Movie Discovery (User-facing)
+- Modern home page with hero slider + curated sections
+- Movie catalog with:
+  - Keyword search across **title, cast, description, genre**
+  - Filters: **category, year, genre, max duration, watch availability**
+  - **Smart ordering**: top-rated first when filtering/searching
+- Movie detail page:
+  - Trailer embed
+  - Watch/download links
+  - Related + recommended content
+
+### ⭐ Ratings + 💬 Comments
+- **Per-user rating**: one rating per user per movie; users can update
+- Live rating updates (AJAX) across UI
+- SaaS-style comment feed and comment form (moderation-ready)
+
+### 📊 Staff Analytics Dashboard
+- Date ranges: **7 / 30 / 90 days**
+- KPIs:
+  - Total views
+  - Watches + favorites (range)
+  - Active users (7d vs selected range)
+  - Watch-available count
+- Funnel (session-based):
+  - Search → Detail → Watch → Signup
+- Top tables:
+  - Top movies by watches
+  - Top movies by favorites
+  - Top rated (all-time; rating + rating_count confidence)
+- Data health panel:
+  - Missing posters, missing trailers
+  - No watch links
+  - Unrated movies
+- **CSV exports**:
+  - Watches CSV, Favorites CSV, Top Rated CSV
+
+### 🏗️ Data Engineering Mini-Pipeline (ETL)
+- Management command: `build_daily_metrics`
+- Builds daily aggregated metrics into `DailyMetric` (gold layer)
+- Backfill support
+- **ETLRunLog** stored in DB and displayed on analytics page (enterprise observability)
+
+---
+
+## Tech Stack
+- **Python 3.11+**
+- **Django 5.x**
+- Bootstrap 5 (dark SaaS skin)
+- Swiper.js (hero slider)
+- Chart.js (analytics charts)
+- SQLite (local dev)
+
+---
+
+## Project Structure (high level)
+
+```text
+cinescope-analytics/
+└─ src/
+   ├─ Imdb/            # Django project config (settings/urls/wsgi/asgi)
+   ├─ movie/           # Main app (models, views, templates, analytics, ETL)
+   ├─ static/          # Static assets (CSS/JS/images)
+   ├─ templates/       # Global templates (base.html etc.) if used
+   ├─ images/          # README screenshots (committed)
+   ├─ media/           # Uploaded images (local dev only; gitignored)
+   ├─ manage.py
+   └─ requirements.txt

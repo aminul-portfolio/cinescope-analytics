@@ -1,136 +1,273 @@
+{# src/movie/templates/movie/home.html #}
 {% extends 'base.html' %}
 {% load static %}
-{% load movie_filters %}
 
-{% block body %}
-<main class="content container">
+{% block title %}CineScope Analytics{% endblock %}
 
-<!-- 🆕 Recently Added -->
-{% if recently_added %}
-<section class="panel mb-5 position-relative">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-white">Recently Added</h2>
-    <a href="{% url 'movie:movie_list' %}?status=RA" class="btn btn-sm btn-outline-light">View All</a>
-  </div>
+{% block content %}
 
-  <button class="scroll-btn left-btn" data-target="#recentlyScroll" aria-label="Scroll Left">
-    <i class="bi bi-chevron-left"></i>
-  </button>
-  <button class="scroll-btn right-btn" data-target="#recentlyScroll" aria-label="Scroll Right">
-    <i class="bi bi-chevron-right"></i>
-  </button>
+{% if slider_movies %}
+<div class="container py-3">
+  <section class="homeslider homeslider--boxed">
+    <div class="swiper hero-swiper">
+      <div class="swiper-wrapper">
 
-  <div id="recentlyScroll" class="movie-horizontal-scroll">
-    <div class="scroll-wrapper">
-      {% for movie in recently_added %}
-      <div class="movie-card">
-        <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
-          <img src="{{ movie.image.url }}" alt="{{ movie.title }}" class="movie-poster"
-               onerror="this.src='{% static 'img/placeholder.png' %}'">
-          <h6 class="mt-2 text-light text-center">{{ movie.title }}</h6>
-          <p class="text-light small mb-1 text-center">⭐ {{ movie.rating }}/10 | ⏱ {{ movie.duration }} min</p>
-          <div class="text-center">
-            {% for genre in movie.category|split_by_comma %}
-            <span class="badge bg-secondary small">{{ genre|title }}</span>
-            {% endfor %}
+        {% for movie in slider_movies %}
+        <div class="swiper-slide">
+
+          {# Image goes first so CSS can place it in column 1 #}
+          {% if movie.banner %}
+            <img
+              src="{{ movie.banner.url }}"
+              alt="{{ movie.title }}"
+              loading="lazy"
+              onerror="this.src='{% static 'img/placeholder.png' %}'"
+            >
+          {% else %}
+            <img
+              src="{{ movie.image.url }}"
+              alt="{{ movie.title }}"
+              loading="lazy"
+              onerror="this.src='{% static 'img/placeholder.png' %}'"
+            >
+          {% endif %}
+
+          {# Card container (right column) #}
+          <div class="hero-caption">
+            <div class="hero-glass">
+
+              <div class="hero-pill-row mb-2">
+                ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+                <span class="hero-pill">⏱ {{ movie.duration }} min</span>
+                <span class="hero-pill">👁️ {{ movie.views_count }} views</span>
+              </div>
+
+              <h1 class="hero-title">{{ movie.title }}</h1>
+
+              <p class="hero-subtitle mb-3">
+                {% if movie.genres.count %}
+                  {% for g in movie.genres.all %}
+                    <span class="badge bg-warning text-dark me-1">{{ g.name }}</span>
+                  {% endfor %}
+                {% else %}
+                  <span class="badge bg-secondary me-1">{{ movie.get_category_display }}</span>
+                  <span class="badge bg-secondary me-1">{{ movie.get_language_display }}</span>
+                {% endif %}
+              </p>
+
+              <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'movie:movie_detail' movie.slug %}" class="btn btn-warning hero-cta">
+                  View details
+                </a>
+                <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn hero-cta">
+                  Browse catalog
+                </a>
+              </div>
+
+            </div>
           </div>
-        </a>
+
+        </div>
+        {% endfor %}
+
       </div>
-      {% endfor %}
+
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.querySelector(".hero-swiper");
+    if (!el) return;
+
+    new Swiper(el, {
+      loop: true,
+      speed: 650,
+      autoplay: { delay: 3500, disableOnInteraction: false },
+      pagination: { el: ".hero-swiper .swiper-pagination", clickable: true },
+      navigation: {
+        nextEl: ".hero-swiper .swiper-button-next",
+        prevEl: ".hero-swiper .swiper-button-prev"
+      }
+    });
+  });
+</script>
 {% endif %}
 
-<!-- ⭐ Top Rated -->
-{% if top_rated %}
-<section class="panel mb-5 position-relative">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-white">Top Rated</h2>
-    <a href="{% url 'movie:movie_list' %}?status=TR" class="btn btn-sm btn-outline-light">View All</a>
-  </div>
 
-  <button class="scroll-btn left-btn" data-target="#topRatedScroll" aria-label="Scroll Left">
-    <i class="bi bi-chevron-left"></i>
-  </button>
-  <button class="scroll-btn right-btn" data-target="#topRatedScroll" aria-label="Scroll Right">
-    <i class="bi bi-chevron-right"></i>
-  </button>
+<main class="content container py-4">
 
-  <div id="topRatedScroll" class="movie-horizontal-scroll">
-    <div class="scroll-wrapper">
-      {% for movie in top_rated %}
-      <div class="movie-card">
-        <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
-          <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
-               onerror="this.src='{% static 'img/placeholder.png' %}'">
-          <h6 class="mt-2 text-light text-center">{{ movie.title }}</h6>
-          <p class="text-light small mb-1 text-center">⭐ {{ movie.rating }}/10 | ⏱ {{ movie.duration }} min</p>
-          <div class="text-center">
-            {% for genre in movie.category|split_by_comma %}
-            <span class="badge bg-warning text-dark small">{{ genre|title }}</span>
-            {% endfor %}
-          </div>
-        </a>
-      </div>
-      {% endfor %}
+  {# Recently Added #}
+  {% if recently_added %}
+  <section class="panel mb-5 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Recently Added</h2>
+      <a href="{% url 'movie:movie_list' %}?status=RA" class="btn btn-sm btn-outline-light nav-btn">View all</a>
     </div>
-  </div>
-</section>
-{% endif %}
 
-<!-- 📈 Most Watched -->
-{% if most_watched %}
-<section class="panel mb-5 position-relative">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="text-white">Most Watched</h2>
-    <a href="{% url 'movie:movie_list' %}?status=MW" class="btn btn-sm btn-outline-light">View All</a>
-  </div>
+    <button class="scroll-btn left" data-target="#recentlyScroll" aria-label="Scroll Left">‹</button>
+    <button class="scroll-btn right" data-target="#recentlyScroll" aria-label="Scroll Right">›</button>
 
-  <button class="scroll-btn left-btn" data-target="#mostWatchedScroll" aria-label="Scroll Left">
-    <i class="bi bi-chevron-left"></i>
-  </button>
-  <button class="scroll-btn right-btn" data-target="#mostWatchedScroll" aria-label="Scroll Right">
-    <i class="bi bi-chevron-right"></i>
-  </button>
+    <div id="recentlyScroll" class="movie-horizontal-scroll">
+      <div class="scroll-wrapper">
+        {% for movie in recently_added %}
+        <div class="movie-card p-2" style="min-width: 180px;">
+          <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+            <img src="{{ movie.image.url }}" alt="{{ movie.title }}" class="movie-poster"
+                 loading="lazy"
+                 onerror="this.src='{% static 'img/placeholder.png' %}'">
 
-  <div id="mostWatchedScroll" class="movie-horizontal-scroll">
-    <div class="scroll-wrapper">
-      {% for movie in most_watched %}
-      <div class="movie-card">
-        <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
-          <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
-               onerror="this.src='{% static 'img/placeholder.png' %}'">
-          <h6 class="mt-2 text-light text-center">{{ movie.title }}</h6>
-          <p class="text-light small mb-1 text-center">👁️ {{ movie.views_count }} views</p>
-          <div class="text-center">
-            {% for genre in movie.category|split_by_comma %}
-            <span class="badge bg-info text-dark small">{{ genre|title }}</span>
-            {% endfor %}
-          </div>
-        </a>
+            <h6 class="mt-2 text-center movie-title">{{ movie.title }}</h6>
+
+            <p class="text-muted small mb-1 text-center movie-meta">
+              ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+              • ⏱ {{ movie.duration }} min
+            </p>
+
+            <div class="text-center">
+              {% if movie.genres.count %}
+                {% for g in movie.genres.all %}
+                  <span class="badge bg-secondary small">{{ g.name }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="badge bg-secondary small">{{ movie.get_category_display }}</span>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
-  </div>
-</section>
-{% endif %}
+  </section>
+  {% endif %}
+
+  {# Top Rated #}
+  {% if top_rated %}
+  <section class="panel mb-5 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Top Rated</h2>
+      <a href="{% url 'movie:movie_list' %}?status=TR" class="btn btn-sm btn-outline-light nav-btn">View all</a>
+    </div>
+
+    <button class="scroll-btn left" data-target="#topRatedScroll" aria-label="Scroll Left">‹</button>
+    <button class="scroll-btn right" data-target="#topRatedScroll" aria-label="Scroll Right">›</button>
+
+    <div id="topRatedScroll" class="movie-horizontal-scroll">
+      <div class="scroll-wrapper">
+        {% for movie in top_rated %}
+        <div class="movie-card p-2" style="min-width: 180px;">
+          <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+            <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                 loading="lazy"
+                 onerror="this.src='{% static 'img/placeholder.png' %}'">
+
+            <h6 class="mt-2 text-center movie-title">{{ movie.title }}</h6>
+
+            <p class="text-muted small mb-1 text-center movie-meta">
+              ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+              • ⏱ {{ movie.duration }} min
+            </p>
+
+            <div class="text-center">
+              {% if movie.genres.count %}
+                {% for g in movie.genres.all %}
+                  <span class="badge bg-warning text-dark small">{{ g.name }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="badge bg-warning text-dark small">{{ movie.get_category_display }}</span>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# Most Watched #}
+  {% if most_watched %}
+  <section class="panel mb-5 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Most Watched</h2>
+      <a href="{% url 'movie:movie_list' %}?status=MW" class="btn btn-sm btn-outline-light nav-btn">View all</a>
+    </div>
+
+    <button class="scroll-btn left" data-target="#mostWatchedScroll" aria-label="Scroll Left">‹</button>
+    <button class="scroll-btn right" data-target="#mostWatchedScroll" aria-label="Scroll Right">›</button>
+
+    <div id="mostWatchedScroll" class="movie-horizontal-scroll">
+      <div class="scroll-wrapper">
+        {% for movie in most_watched %}
+        <div class="movie-card p-2" style="min-width: 180px;">
+          <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+            <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                 loading="lazy"
+                 onerror="this.src='{% static 'img/placeholder.png' %}'">
+
+            <h6 class="mt-2 text-center movie-title">{{ movie.title }}</h6>
+
+            <p class="text-muted small mb-1 text-center movie-meta">
+              👁️ {{ movie.views_count }} views
+            </p>
+
+            <div class="text-center">
+              {% if movie.genres.count %}
+                {% for g in movie.genres.all %}
+                  <span class="badge bg-info text-dark small">{{ g.name }}</span>
+                {% endfor %}
+              {% else %}
+                <span class="badge bg-info text-dark small">{{ movie.get_category_display }}</span>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
 </main>
 
-<!-- 🔧 Scroll Button Script -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const scrollAmount = 300;
+    const scrollAmount = 360;
+
+    function getScrollable(el) {
+      if (!el) return null;
+
+      // If the element itself can scroll horizontally, use it
+      const style = window.getComputedStyle(el);
+      const canScrollX = (style.overflowX === "auto" || style.overflowX === "scroll");
+      if (canScrollX) return el;
+
+      // Otherwise try the inner wrapper (common pattern)
+      const inner = el.querySelector(".scroll-wrapper");
+      return inner || el;
+    }
 
     document.querySelectorAll(".scroll-btn").forEach(button => {
       button.addEventListener("click", () => {
         const targetId = button.getAttribute("data-target");
-        const scrollContainer = document.querySelector(targetId);
-        const direction = button.classList.contains("right-btn") ? 1 : -1;
-        scrollContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        const host = document.querySelector(targetId);
+        const scrollEl = getScrollable(host);
+
+        if (!scrollEl) return;
+
+        const direction = button.classList.contains("right") ? 1 : -1;
+
+        scrollEl.scrollBy({
+          left: direction * scrollAmount,
+          behavior: "smooth"
+        });
       });
     });
   });
 </script>
+
 {% endblock %}

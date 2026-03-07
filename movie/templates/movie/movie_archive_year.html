@@ -1,116 +1,153 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block body %}
-<main class="container mt-4">
+{% block title %}Browse Movies | CineScope Analytics{% endblock %}
 
-  <!-- 🎬 Movie Filters -->
-  <section class="text-center mb-4">
-    <h2 class="fw-bold text-primary">🎬 Browse Movies</h2>
+{% block content %}
+<main class="container py-4">
 
-    <div class="d-flex justify-content-center flex-wrap gap-3 my-4">
-      <!-- Genre -->
-      <div>
-        <label class="fw-semibold me-2">Genre:</label>
-        <div class="btn-group" role="group">
-          {% for cat in genres %}
-            <a href="?category={{ cat }}" class="btn btn-sm {% if selected_category == cat %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ cat|title }}</a>
-          {% endfor %}
+  <!-- Filters -->
+  <section class="mb-4">
+    <div class="text-center mb-3">
+      <div class="text-muted small mb-2">Catalog</div>
+      <h2 class="mb-0" style="font-weight:900; letter-spacing:-0.02em;">🎬 Browse Movies</h2>
+      <p class="text-muted mb-0">Filter by genre and year, then explore results.</p>
+    </div>
+
+    <div class="card p-3">
+      <div class="row g-3 align-items-start">
+
+        <!-- Genre -->
+        <div class="col-lg-8">
+          <div class="text-muted small mb-2">🎭 Genre</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for cat in genres %}
+              <a href="?category={{ cat }}"
+                 class="btn btn-sm {% if selected_category == cat %}btn-warning{% else %}btn-outline-light{% endif %} nav-btn">
+                {{ cat|title }}
+              </a>
+            {% endfor %}
+          </div>
         </div>
-      </div>
 
-      <!-- Year -->
-      <div>
-        <label class="fw-semibold me-2">Year:</label>
-        <div class="btn-group" role="group">
-          {% for y in years %}
-            <a href="?year={{ y }}" class="btn btn-sm {% if selected_year == y %}btn-success{% else %}btn-outline-success{% endif %}">{{ y }}</a>
-          {% endfor %}
+        <!-- Year -->
+        <div class="col-lg-4">
+          <div class="text-muted small mb-2">📅 Year</div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for y in years %}
+              <a href="?year={{ y.year }}"
+                 class="btn btn-sm {% if selected_year|stringformat:'s' == y.year|stringformat:'s' %}btn-warning{% else %}btn-outline-light{% endif %} nav-btn">
+                {{ y.year }}
+              </a>
+            {% endfor %}
+          </div>
         </div>
-      </div>
 
-      <!-- Reset -->
-      {% if selected_category or selected_year %}
-        <a href="{% url 'movie:movie_list' %}" class="btn btn-sm btn-secondary">Reset Filters</a>
-      {% endif %}
+        <!-- Reset -->
+        {% if selected_category or selected_year %}
+          <div class="col-12">
+            <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">🔄 Reset filters</a>
+          </div>
+        {% endif %}
+
+      </div>
     </div>
   </section>
 
-  <!-- 🎥 Scrollable Results -->
-  <section class="panel mb-5 position-relative">
-    <h3 class="text-white mb-3">Results</h3>
+  <!-- Results -->
+  <section class="panel mb-4 position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="section-title mb-0">Results</h3>
+      <div class="text-muted small">
+        {% if object_list %}Showing {{ object_list|length }} item(s){% else %}No results{% endif %}
+      </div>
+    </div>
 
-    <!-- ⏪ Scroll Buttons -->
-    <button class="scroll-btn left-btn btn btn-dark rounded-circle shadow" data-target="#movieScroll" aria-label="Previous">
-      <i class="bi bi-chevron-left fs-5"></i>
-    </button>
-    <button class="scroll-btn right-btn btn btn-dark rounded-circle shadow" data-target="#movieScroll" aria-label="Next">
-      <i class="bi bi-chevron-right fs-5"></i>
-    </button>
+    <!-- Scroll Buttons -->
+    <button class="scroll-btn left" data-target="#movieScroll" aria-label="Scroll Left">‹</button>
+    <button class="scroll-btn right" data-target="#movieScroll" aria-label="Scroll Right">›</button>
 
-    <!-- 🔄 Movie Scroll Area -->
     <div id="movieScroll" class="movie-horizontal-scroll">
-      <div class="scroll-wrapper d-flex gap-4">
+      <div class="scroll-wrapper d-flex gap-3">
         {% if object_list %}
           {% for movie in object_list %}
-            <div class="card movie-card bg-dark text-light border-0 shadow-sm" style="width: 200px;">
-              <a href="{% url 'movie:movie_detail' movie.slug %}">
-                <img src="{{ movie.image.url }}" class="card-img-top rounded-top" alt="{{ movie.title }}" onerror="this.src='{% static 'img/placeholder.png' %}'">
-              </a>
-              <div class="card-body p-2 text-center">
-                <h6 class="card-title fw-bold text-white text-truncate" title="{{ movie.title }}">{{ movie.title }}</h6>
-                <p class="card-text small text-muted mb-2">
+            <div class="movie-card p-2" style="min-width: 200px;">
+              <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+                <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                     onerror="this.src='{% static 'img/placeholder.png' %}'">
+
+                <h6 class="mt-2 text-light text-center movie-title text-truncate" title="{{ movie.title }}">
+                  {{ movie.title }}
+                </h6>
+
+                <p class="text-muted small mb-2 text-center movie-meta">
                   ⭐ {{ movie.rating }}/10<br>
-                  📅 {{ movie.year_of_production|date:"Y" }} | ⏱ {{ movie.duration }} min
+                  📅 {{ movie.year_of_production|date:"Y" }} • ⏱ {{ movie.duration }} min
                 </p>
-                <a href="{% url 'movie:movie_detail' movie.slug %}" class="btn btn-sm btn-outline-light">Watch Now</a>
-              </div>
+
+                <div class="d-grid">
+                  <span class="btn btn-sm btn-outline-light nav-btn">View details</span>
+                </div>
+              </a>
             </div>
           {% endfor %}
         {% else %}
-          <div class="text-center w-100">
-            <h4 class="text-danger">No movies found for the selected filters.</h4>
+          <div class="text-center w-100 py-4">
+            <h5 class="mb-2" style="font-weight:800;">No movies found</h5>
+            <div class="text-muted">Try a different genre or year.</div>
           </div>
         {% endif %}
       </div>
     </div>
   </section>
 
-  <!-- 📄 Pagination -->
+  <!-- Pagination -->
   {% if is_paginated %}
     <nav class="mt-4 d-flex justify-content-center">
       <ul class="pagination">
+
         {% if page_obj.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">Previous</a>
+            <a class="page-link"
+               href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">
+              Previous
+            </a>
           </li>
         {% endif %}
+
         {% for num in page_obj.paginator.page_range %}
           <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">{{ num }}</a>
+            <a class="page-link"
+               href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">
+              {{ num }}
+            </a>
           </li>
         {% endfor %}
+
         {% if page_obj.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">Next</a>
+            <a class="page-link"
+               href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">
+              Next
+            </a>
           </li>
         {% endif %}
+
       </ul>
     </nav>
   {% endif %}
 
 </main>
 
-<!-- 🧠 Scroll Button Logic -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const scrollAmount = 320;
+    const scrollAmount = 360;
     document.querySelectorAll(".scroll-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const targetId = btn.dataset.target;
         const container = document.querySelector(targetId);
-        const direction = btn.classList.contains("right-btn") ? 1 : -1;
-        container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        const direction = btn.classList.contains("right") ? 1 : -1;
+        container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
       });
     });
   });

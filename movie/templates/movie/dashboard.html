@@ -1,41 +1,146 @@
+{# src/movie/templates/movie/dashboard.html (UPDATED with new changes) #}
 {% extends 'base.html' %}
-{% block body %}
+
+{% block title %}Dashboard | CineScope Analytics{% endblock %}
+
+{% block content %}
 <div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-      <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">👋 Welcome, {{ request.user.username }}!</h3>
-        </div>
-        <div class="card-body">
-          <p class="fs-5 text-muted">
-            Your personalized dashboard gives you full control — explore new releases, manage your account, and continue watching your favorite films.
-          </p>
 
-          <div class="row mt-4 g-3">
-            <div class="col-md-4">
-              <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-primary w-100">
-                🎬 Browse Movies
-              </a>
-            </div>
-            <div class="col-md-4">
-              <a href="#" class="btn btn-outline-success w-100">
-                ⚙️ Manage Profile
-              </a>
-            </div>
-            <div class="col-md-4">
-              <a href="{% url 'movie:logout' %}" class="btn btn-outline-danger w-100">
-                🚪 Logout
-              </a>
-            </div>
+  <!-- Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+    <div>
+      <h1 class="mb-1" style="font-weight:800; letter-spacing:-0.02em;">Dashboard</h1>
+      <p class="text-muted mb-0">
+        Welcome back, <strong>{{ request.user.username }}</strong>. Manage your account and keep exploring.
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a href="{% url 'movie:movie_list' %}" class="btn btn-warning nav-cta">🎬 Browse Movies</a>
+      <a href="{% url 'movie:logout' %}" class="btn btn-outline-light nav-btn">🚪 Logout</a>
+    </div>
+  </div>
+
+  <!-- Stats (safe placeholders: recruiter polish without backend changes) -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-muted small">Account</div>
+            <div style="font-size:20px; font-weight:800;">Active</div>
           </div>
+          <div class="badge bg-success">Online</div>
+        </div>
+        <div class="text-muted small mt-2">Authentication + dashboard access enabled.</div>
+      </div>
+    </div>
 
-          <div class="mt-4">
-            <p class="text-muted small">Need help? Visit our <a href="#">Support Center</a> or <a href="#">Terms & Privacy</a>.</p>
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <div class="text-muted small">Browsing</div>
+        <div style="font-size:20px; font-weight:800;">Search + Filters</div>
+        <div class="text-muted small mt-2">Use categories, year, and keyword search.</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <div class="text-muted small">Engagement</div>
+        <div style="font-size:20px; font-weight:800;">Views + Ratings</div>
+        <div class="text-muted small mt-2">Top-rated titles prioritize rating + rating count.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card p-4 h-100">
+        <h4 class="mb-2" style="font-weight:800;">Quick actions</h4>
+        <p class="text-muted mb-3">
+          Fast navigation to core features. This keeps the product feeling “enterprise” and intentional.
+        </p>
+
+        <div class="row g-2">
+          <div class="col-md-6">
+            <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light w-100 nav-btn">
+              🎬 Browse all movies
+            </a>
+          </div>
+          <div class="col-md-6">
+            {# ✅ search view expects ?query= #}
+            <a href="{% url 'movie:movie_search' %}?query=" class="btn btn-outline-light w-100 nav-btn">
+              🔎 Search movies
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="{% url 'movie:movie_search' %}?preset=top" class="btn btn-outline-light w-100 nav-btn">
+              ⭐ Top rated
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="{% url 'movie:movie_search' %}?preset=trending" class="btn btn-outline-light w-100 nav-btn">
+              📈 Trending
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="{% url 'movie:about' %}" class="btn btn-outline-light w-100 nav-btn">
+              ℹ️ About CineScope
+            </a>
+          </div>
+          <div class="col-md-6">
+            <a href="{% url 'movie:password_reset' %}" class="btn btn-outline-light w-100 nav-btn">
+              🔐 Password recovery
+            </a>
+          </div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.10);">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+          <div class="text-muted small">
+            Tip: Your ratings + comments now update instantly across the platform (movie detail, lists, analytics).
+          </div>
+          <div class="text-muted small">
+            Logged in as <strong>{{ request.user.username }}</strong>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Profile Card -->
+    <div class="col-lg-4">
+      <div class="card p-4 h-100">
+        <h5 class="mb-2" style="font-weight:800;">Profile</h5>
+        <div class="text-muted small mb-3">Basic account info (safe display).</div>
+
+        <div class="mb-2">
+          <div class="text-muted small">Username</div>
+          <div style="font-weight:700;">{{ request.user.username }}</div>
+        </div>
+
+        <div class="mb-3">
+          <div class="text-muted small">Email</div>
+          <div style="font-weight:700;">
+            {% if request.user.email %}
+              {{ request.user.email }}
+            {% else %}
+              <span class="text-muted">Not set</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <a href="#" class="btn btn-outline-light w-100 nav-btn" aria-disabled="true">
+          ⚙️ Manage Profile (placeholder)
+        </a>
+
+        <div class="text-muted small mt-3">
+          Note: This button is intentionally a placeholder unless you’ve built profile editing.
+        </div>
+      </div>
+    </div>
   </div>
+
 </div>
 {% endblock %}

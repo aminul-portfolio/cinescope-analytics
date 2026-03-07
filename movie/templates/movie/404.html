@@ -1,9 +1,39 @@
---- 404.html ---
 {% extends 'base.html' %}
-{% block body %}
-<div class="container text-center mt-5">
-  <h1 class="display-1 text-danger">404</h1>
-  <h3 class="text-muted">Oops! The page you're looking for doesn't exist.</h3>
-  <a href="/" class="btn btn-primary mt-3">Go to Homepage</a>
+
+{% block title %}404 | CineScope Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-7 text-center">
+
+      <div class="text-muted small mb-2">CineScope Analytics</div>
+
+      <div style="font-size: clamp(56px, 8vw, 96px); font-weight: 900; letter-spacing: -0.03em;">
+        404
+      </div>
+
+      <h2 class="mb-2" style="font-weight:900; letter-spacing:-0.02em;">
+        Page not found
+      </h2>
+
+      <p class="text-muted mb-4">
+        The page you requested doesn’t exist, or the link is outdated.
+        Use the buttons below to continue browsing.
+      </p>
+
+      <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{% url 'movie:movie_list' %}" class="btn btn-warning nav-cta">Browse movies</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-light nav-btn">Back to landing</a>
+      </div>
+
+      <div class="text-muted small mt-4">
+        Tip: If this happened after a rename, check your URL patterns and template links.
+      </div>
+
+    </div>
+  </div>
+
 </div>
 {% endblock %}

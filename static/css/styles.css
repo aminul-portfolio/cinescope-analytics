@@ -1,347 +1,823 @@
 /* =========================================================
-   CineScope Analytics — SaaS / Enterprise UI Skin
+   CineScope Analytics — SaaS / Enterprise UI Skin (SINGLE SOURCE)
+   UPDATED (SaaS-level upgrades; no breaking design shifts)
+   ✅ Adds: better form/controls styling, table polish, pagination, comments UI,
+            consistent scroll buttons, improved chips, subtle animations
+   ✅ Keeps: your tokens + hero slider system + catalog + detail layout
    ========================================================= */
 
 /* ---------- Design tokens ---------- */
 :root{
-  --bg: #0b1220;
-  --bg2: #0f172a;
-  --card: rgba(255,255,255,0.06);
-  --border: rgba(255,255,255,0.10);
-  --text: rgba(255,255,255,0.92);
-  --muted: rgba(255,255,255,0.70);
-  --shadow: 0 14px 40px rgba(0,0,0,0.45);
-  --shadow-soft: 0 10px 30px rgba(0,0,0,0.30);
-  --radius: 18px;
-  --radius-sm: 14px;
+  --bg:#0b1220;
+  --bg2:#0f172a;
+
+  --card:rgba(255,255,255,0.06);
+  --card-2:rgba(255,255,255,0.045);
+  --border:rgba(255,255,255,0.10);
+
+  --text:rgba(255,255,255,0.92);
+  --muted:rgba(255,255,255,0.70);
+
+  --shadow:0 18px 48px rgba(0,0,0,0.52);
+  --shadow-soft:0 12px 32px rgba(0,0,0,0.34);
+
+  --radius:18px;
+  --radius-lg:22px;
+
+  --accent:#3b82f6;
+  --accent-2:#60a5fa;
+
+  --ring:0 0 0 4px rgba(59,130,246,0.20);
+
+  /* ✅ SaaS extras */
+  --danger:#ef4444;
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --glass:rgba(11,18,32,0.66);
+  --glass-2:rgba(11,18,32,0.42);
+  --divider:rgba(255,255,255,0.08);
 }
 
-/* ---------- Page base ---------- */
+/* ---------- Base / resets ---------- */
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
 .app-body{
-  background: radial-gradient(1200px 600px at 15% 0%, rgba(59,130,246,0.16), transparent 60%),
-              radial-gradient(900px 500px at 85% 10%, rgba(236,72,153,0.12), transparent 55%),
-              linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-  color: var(--text);
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 15% 0%, rgba(59,130,246,0.16), transparent 60%),
+    radial-gradient(900px 500px at 85% 10%, rgba(236,72,153,0.12), transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+  color:var(--text);
+  min-height:100vh;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.main-wrap{ padding:22px 0 40px; }
+
+a{ text-decoration:none; }
+a:hover{ text-decoration:none; }
+
+/* Bootstrap dark theme fixes */
+.text-muted{ color:rgba(255,255,255,0.68) !important; }
+
+/* Focus states (SaaS polish) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
+  outline:none !important;
+  box-shadow:var(--ring) !important;
+  border-color:rgba(59,130,246,0.55) !important;
 }
 
-.main-wrap{
-  padding: 22px 0 40px;
+/* ✅ Subtle motion (SaaS feel) */
+@media (prefers-reduced-motion:no-preference){
+  .card,
+  .movie-card,
+  .catalog-card,
+  .btn,
+  .chip{
+    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+  }
 }
-
-a{ text-decoration: none; }
-a:hover{ text-decoration: none; }
 
 /* ---------- Navbar (SaaS glass) ---------- */
 .navbar-saas{
-  background: rgba(11,18,32,0.72);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,0.10);
+  background:rgba(11,18,32,0.72);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.10);
 }
 
 .brand-text{
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text);
+  font-weight:900;
+  letter-spacing:-0.02em;
+  color:var(--text);
 }
 
 .brand-badge{
-  font-size: 12px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(255,255,255,0.82);
+  font-size:12px;
+  padding:3px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.10);
+  border:1px solid rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.82);
 }
 
 .navbar-saas .nav-link{
-  color: rgba(255,255,255,0.80);
-  font-weight: 550;
-  margin: 0 4px;
+  color:rgba(255,255,255,0.80);
+  font-weight:600;
+  margin:0 4px;
 }
-
 .navbar-saas .nav-link:hover,
 .navbar-saas .nav-link.active{
-  color: rgba(255,255,255,0.98);
+  color:rgba(255,255,255,0.98);
 }
 
 .dropdown-saas{
-  background: rgba(15,23,42,0.98);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: var(--shadow);
+  background:rgba(15,23,42,0.98);
+  border:1px solid rgba(255,255,255,0.10);
+  box-shadow:var(--shadow);
 }
-
-.dropdown-saas .dropdown-item{
-  color: rgba(255,255,255,0.86);
-}
-
+.dropdown-saas .dropdown-item{ color:rgba(255,255,255,0.86); }
 .dropdown-saas .dropdown-item:hover{
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.98);
+  background:rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.98);
 }
 
 .nav-user{
-  color: rgba(255,255,255,0.78);
-  font-size: 14px;
+  color:rgba(255,255,255,0.78);
+  font-size:14px;
 }
+
+/* Buttons */
+.btn{ border-radius:14px; }
+.btn-primary{ box-shadow:var(--shadow-soft); }
 
 .nav-btn{
-  border-radius: 999px;
-  padding: 7px 14px;
+  border-radius:999px;
+  padding:7px 14px;
+}
+.nav-cta{
+  border-radius:999px;
+  padding:7px 14px;
+  font-weight:800;
+  box-shadow:var(--shadow-soft);
 }
 
-.nav-cta{
-  border-radius: 999px;
-  padding: 7px 14px;
-  font-weight: 700;
-  box-shadow: var(--shadow-soft);
+/* ✅ Better disabled state */
+.btn:disabled,
+.btn[aria-disabled="true"]{
+  opacity:.55;
+  pointer-events:none;
+  filter:saturate(.6);
 }
 
 /* Search */
-.nav-search-wrap{
-  gap: 8px;
-}
-
+.nav-search-wrap{ gap:8px; }
 .nav-search{
-  border-radius: 999px !important;
-  background: rgba(255,255,255,0.08) !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  color: rgba(255,255,255,0.92) !important;
-  min-width: 240px;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.08) !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  color:rgba(255,255,255,0.92) !important;
+  min-width:240px;
 }
-
-.nav-search::placeholder{
-  color: rgba(255,255,255,0.55) !important;
-}
+.nav-search::placeholder{ color:rgba(255,255,255,0.55) !important; }
 
 .nav-search-btn{
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.16);
+  border-radius:999px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.16);
+  color:rgba(255,255,255,0.92);
+  padding:7px 14px;
+}
+.nav-search-btn:hover{ background:rgba(255,255,255,0.18); }
+
+@media (max-width:768px){
+  .nav-search{ min-width:160px; }
+}
+
+/* ✅ Forms (SaaS-level, consistent everywhere) */
+.form-control,
+.form-select,
+textarea.form-control{
+  background:rgba(255,255,255,0.08) !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  color:rgba(255,255,255,0.92) !important;
+  border-radius:14px !important;
+}
+.form-control::placeholder,
+textarea.form-control::placeholder{
+  color:rgba(255,255,255,0.55) !important;
+}
+.form-select{
+  background-image:none !important;
+}
+.form-label{
+  font-weight:800;
+  letter-spacing:-0.01em;
+}
+.helptext,
+.form-text{
+  color:rgba(255,255,255,0.68) !important;
+}
+/* ✅ Fix: dropdown list (options) showing white on dark UI */
+:root{
+  color-scheme: dark; /* hint browser to render native controls in dark mode */
+}
+
+.form-select,
+.form-control{
+  color-scheme: dark;
+}
+
+/* Many browsers respect option styling; some OS-native menus may ignore it */
+.form-select option{
+  background: #0f172a;
   color: rgba(255,255,255,0.92);
-  padding: 7px 14px;
 }
 
-.nav-search-btn:hover{
-  background: rgba(255,255,255,0.18);
+/* Optional: improve hover/selected feel where supported */
+.form-select option:checked{
+  background: #1f2a44;
+  color: rgba(255,255,255,0.96);
 }
+/* ✅ Validation */
+.is-invalid,
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid{
+  border-color:rgba(239,68,68,0.60) !important;
+  box-shadow:0 0 0 4px rgba(239,68,68,0.14) !important;
+}
+.invalid-feedback{ color:rgba(255,255,255,0.82); }
 
-/* ---------- Hero Slider (full width + full height) ---------- */
-/* Use this on homepage container: <section class="homeslider"> ... swiper ... </section> */
+/* =========================================================
+   HERO SLIDER (SaaS — SINGLE SYSTEM)
+   ========================================================= */
 .homeslider{
-  width: 100%;
-  height: clamp(420px, 75vh, 760px);
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  background: #000;
+  width:100%;
+  height:clamp(340px, 52vh, 560px);
+  position:relative;
+  background:#000;
 }
-/* Hero caption overlay */
-.hero-caption{
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 44px;
-  z-index: 5;
-  color: rgba(255,255,255,0.95);
+.homeslider--boxed{
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.10);
+  box-shadow:var(--shadow);
 }
 
-.hero-title{
-  font-size: clamp(28px, 3.2vw, 48px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 10px 0 12px;
-  max-width: 20ch;
-}
-
-.hero-subtitle{
-  margin: 0 0 16px;
-  max-width: 72ch;
-}
-
-.hero-pill-row{
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.hero-pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(10px);
-  font-size: 13px;
-}
-
-.hero-cta{
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 10px 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-
-@media (max-width: 768px){
-  .hero-caption{ bottom: 18px; padding: 0 14px; }
-  .hero-title{ max-width: 26ch; }
-}
-/* Ensure Swiper uses the full container height */
+/* Swiper sizing */
+.homeslider .swiper,
 .homeslider .swiper-wrapper,
 .homeslider .swiper-slide{
-  height: 100%;
+  height:100%;
 }
 
-.homeslider .swiper-slide img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;       /* key: full size without distortion */
-  object-position: center;
-  display: block;
-  transform: scale(1.02);
-}
-
-/* Premium gradient overlay */
-.homeslider::after{
-  content: "";
-  position: absolute;
-  inset: 0;
+/* Premium “empty space” background when using contain */
+.homeslider .swiper-slide{
+  position:relative;
   background:
-    linear-gradient(90deg, rgba(11,18,32,0.82) 0%, rgba(11,18,32,0.25) 55%, rgba(11,18,32,0.12) 100%),
-    linear-gradient(0deg, rgba(11,18,32,0.55) 0%, rgba(11,18,32,0.05) 40%, rgba(11,18,32,0.35) 100%);
-  pointer-events: none;
+    radial-gradient(900px 520px at 50% 30%, rgba(255,255,255,0.08), rgba(0,0,0,0.92)) !important;
+}
+
+/* Image: FULL visible */
+.homeslider .swiper-slide > img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  transform:none !important;
+  display:block !important;
+}
+
+/* Subtle overlay to keep contrast */
+.homeslider::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(820px 520px at 18% 60%, rgba(0,0,0,0.38), transparent 70%),
+    linear-gradient(90deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0.10) 75%, rgba(0,0,0,0.20) 100%);
+  pointer-events:none;
+  z-index:2;
+}
+
+/* Caption container */
+.hero-caption{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  padding:clamp(14px, 2.2vw, 26px);
+}
+
+/* Glass panel behind text */
+.hero-glass{
+  max-width:clamp(320px, 38vw, 560px);
+  padding:clamp(14px, 2vw, 20px);
+  border-radius:18px;
+  background:rgba(11,18,32,0.42);
+  border:1px solid rgba(255,255,255,0.14);
+  backdrop-filter:blur(14px);
+  box-shadow:0 18px 44px rgba(0,0,0,0.52);
+}
+
+/* Pills row */
+.hero-pill-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.hero-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.22);
+  border:1px solid rgba(255,255,255,0.20);
+  color:rgba(255,255,255,0.92);
+  font-size:13px;
+}
+
+/* Title */
+.hero-title{
+  font-size:clamp(28px, 3.2vw, 54px);
+  font-weight:950;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  margin:10px 0 10px;
+  color:rgba(255,255,255,0.96);
+  text-shadow:0 14px 28px rgba(0,0,0,0.50);
+}
+
+.hero-subtitle{ margin:0 0 14px; }
+
+/* CTA buttons in slider */
+.hero-cta{
+  border-radius:999px;
+  font-weight:800;
+  padding:10px 18px;
+  box-shadow:0 12px 28px rgba(0,0,0,0.40);
 }
 
 /* Swiper controls */
 .homeslider .swiper-button-prev,
 .homeslider .swiper-button-next{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.40);
-  border: 1px solid rgba(255,255,255,0.20);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-soft);
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.34);
+  border:1px solid rgba(255,255,255,0.20);
+  backdrop-filter:blur(10px);
+  box-shadow:var(--shadow-soft);
+  z-index:4;
 }
-
 .homeslider .swiper-button-prev:after,
 .homeslider .swiper-button-next:after{
-  font-size: 16px;
-  color: rgba(255,255,255,0.96);
+  font-size:16px;
+  color:rgba(255,255,255,0.96);
 }
-
+.homeslider .swiper-pagination{ z-index:4; }
 .homeslider .swiper-pagination-bullet{
-  background: rgba(255,255,255,0.70);
-  opacity: 0.7;
+  background:rgba(255,255,255,0.70);
+  opacity:0.7;
 }
-.homeslider .swiper-pagination-bullet-active{
-  opacity: 1;
+.homeslider .swiper-pagination-bullet-active{ opacity:1; }
+
+@media (max-width:992px){
+  .hero-caption{ align-items:flex-end; }
+  .hero-glass{ max-width:min(92%, 760px); }
+}
+@media (max-width:768px){
+  .homeslider{ height:clamp(300px, 48vh, 520px); }
+  .hero-title{ font-size:clamp(24px, 7vw, 40px); }
 }
 
-@media (max-width: 768px){
-  .homeslider{ height: clamp(320px, 55vh, 520px); }
-  .nav-search{ min-width: 160px; }
-}
-
-/* ---------- Cards / grids / sections ---------- */
+/* ---------- Sections / Cards ---------- */
 .section-title{
-  font-size: clamp(18px, 1.7vw, 24px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 16px 0 12px;
+  font-size:clamp(18px, 1.7vw, 24px);
+  font-weight:900;
+  letter-spacing:-0.02em;
+  margin:16px 0 12px;
 }
 
 .card,
 .movie-card{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-soft);
+  overflow:hidden;
 }
 
-.card .card-body{
-  color: var(--text);
+/* Ensure card text is readable */
+.card{ color:var(--text); }
+.card a{ color:inherit; }
+
+/* Movie cards hover */
+.movie-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,255,255,0.16);
+  box-shadow:var(--shadow);
 }
 
 /* Movie cards */
 .movie-card img{
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
 }
 
+/* Accent title */
 .movie-card .movie-title{
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  color:var(--accent-2) !important;
+  font-weight:900;
+  letter-spacing:-0.01em;
+  margin-top:10px;
 }
+.movie-card:hover .movie-title{ color:var(--accent) !important; }
 
-.movie-card .movie-meta{
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* Buttons */
-.btn{
-  border-radius: 14px;
-}
-
-.btn-primary{
-  box-shadow: var(--shadow-soft);
-}
-
-/* ---------- Horizontal scroll row (if you use it) ---------- */
+/* ---------- Horizontal scroll row ---------- */
 .movie-horizontal-scroll{
-  position: relative;
-  margin: 16px 0 24px;
+  position:relative;
+  margin:16px 0 24px;
 }
-
 .scroll-wrapper{
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  padding: 8px 4px 14px;
-  scroll-behavior: smooth;
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:8px 4px 14px;
+  scroll-behavior:smooth;
 }
-
-.scroll-wrapper::-webkit-scrollbar{
-  height: 8px;
-}
+.scroll-wrapper::-webkit-scrollbar{ height:8px; }
 .scroll-wrapper::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,0.18);
-  border-radius: 999px;
+  background:rgba(255,255,255,0.18);
+  border-radius:999px;
 }
 
+/* ✅ scroll wrappers should be focusable if needed (keyboard users) */
+.scroll-wrapper:focus-visible{
+  outline:none;
+  box-shadow:var(--ring);
+  border-radius:14px;
+}
+
+/* Scroll buttons */
 .scroll-btn{
-  position: absolute;
-  top: 40%;
-  transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.40);
-  border: 1px solid rgba(255,255,255,0.20);
-  color: rgba(255,255,255,0.92);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-soft);
-  display: grid;
-  place-items: center;
-  z-index: 5;
+  position:absolute;
+  top:40%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);
+  color:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  box-shadow:var(--shadow-soft);
+  display:grid;
+  place-items:center;
+  z-index:5;
 }
-
-.scroll-btn.left{ left: -10px; }
-.scroll-btn.right{ right: -10px; }
-
+.scroll-btn.left{ left:-10px; }
+.scroll-btn.right{ right:-10px; }
 .scroll-btn:hover{
-  background: rgba(0,0,0,0.55);
+  background:rgba(255,255,255,0.14);
+  transform:translateY(-50%) scale(1.03);
 }
 
 /* ---------- Footer ---------- */
 .footer-saas{
-  border-top: 1px solid rgba(255,255,255,0.08);
-  background: rgba(11,18,32,0.60);
+  border-top:1px solid rgba(255,255,255,0.08);
+  background:rgba(11,18,32,0.60);
+}
+
+/* ==============================
+   Catalog (SaaS) — Movie List
+   ============================== */
+.catalog-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.catalog-kicker{
+  color:var(--muted);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.catalog-title{
+  margin:0;
+  font-weight:950;
+  letter-spacing:-0.02em;
+  font-size:clamp(26px, 3vw, 40px);
+}
+.catalog-subtitle{
+  margin:6px 0 0;
+  color:var(--muted);
+}
+.catalog-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+/* Filters panel */
+.catalog-filter-panel{
+  background:rgba(255,255,255,0.045);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:var(--radius);
+}
+
+/* Chips */
+.filter-label{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.filter-row{ display:flex; flex-wrap:wrap; gap:10px; }
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.92);
+  font-size:13px;
+}
+.chip:hover{ background:rgba(255,255,255,0.10); transform:translateY(-1px); }
+.chip--active{ background:rgba(245,158,11,0.16); border-color:rgba(245,158,11,0.42); }
+
+.active-filters{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.10);
+}
+.active-label{ color:var(--muted); font-size:12px; margin-right:8px; }
+.active-pill{
+  display:inline-flex;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.90);
+  font-size:12px;
+  margin-right:8px;
+}
+
+/* Grid */
+.catalog-grid{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0, 1fr));
+  gap:14px;
+}
+@media (max-width:1200px){ .catalog-grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+@media (max-width:992px){ .catalog-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+@media (max-width:640px){ .catalog-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+
+/* Catalog card */
+.catalog-card{
+  background:var(--card-2);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:var(--shadow-soft);
+}
+.catalog-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(255,255,255,0.20);
+  box-shadow:var(--shadow);
+}
+
+.catalog-link{ color:inherit; display:block; }
+
+.catalog-media{
+  position:relative;
+  aspect-ratio:3 / 4;
+  background:rgba(0,0,0,0.35);
+}
+.catalog-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.catalog-badges{
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.badge-soft{
+  display:inline-flex;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.38);
+  border:1px solid rgba(255,255,255,0.18);
+  backdrop-filter:blur(10px);
+  font-size:12px;
+  color:rgba(255,255,255,0.92);
+}
+
+.catalog-body{ padding:12px 12px 14px; }
+
+.catalog-name{
+  font-weight:850;
+  letter-spacing:-0.01em;
+  font-size:14px;
+  line-height:1.25;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.catalog-meta{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+.catalog-cta{ margin-top:12px; }
+
+/* ✅ Pagination (SaaS) */
+.pagination .page-link{
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.12) !important;
+  color:rgba(255,255,255,0.86) !important;
+  border-radius:12px !important;
+  margin:0 4px;
+}
+.pagination .page-item.active .page-link{
+  background:rgba(245,158,11,0.22) !important;
+  border-color:rgba(245,158,11,0.40) !important;
+  color:rgba(255,255,255,0.96) !important;
+}
+.pagination .page-link:hover{
+  background:rgba(255,255,255,0.10) !important;
+}
+
+/* =========================================================
+   MOVIE DETAIL — Dark mode readability fix
+   ========================================================= */
+.panel,
+.panel *{ color:var(--text); }
+
+.panel .text-muted,
+.panel p,
+.panel small,
+.panel li,
+.panel label{
+  color:rgba(255,255,255,0.78) !important;
+}
+
+.panel .text-dark,
+.homeslider .text-dark{
+  color:var(--text) !important;
+}
+
+.panel .card,
+.panel .movie-card,
+.panel .list-group,
+.panel .list-group-item{
+  background:rgba(255,255,255,0.06) !important;
+  border-color:rgba(255,255,255,0.12) !important;
+}
+.panel .list-group-item{ color:rgba(255,255,255,0.86) !important; }
+
+/* Bootstrap alerts */
+.alert{
+  background:rgba(255,255,255,0.06) !important;
+  border-color:rgba(255,255,255,0.12) !important;
+  color:rgba(255,255,255,0.86) !important;
+}
+
+/* Movie detail helpers */
+.movie-detail-page .page-title{
+  font-weight:950;
+  letter-spacing:-0.02em;
+}
+.movie-detail-page .section-h4{
+  font-weight:900;
+  letter-spacing:-0.01em;
+}
+.movie-detail-page .trailer-frame{
+  border:1px solid rgba(255,255,255,0.10);
+}
+
+.movie-detail-page .empty-state{
+  padding:18px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.04);
+  border:1px dashed rgba(255,255,255,0.18);
+}
+.movie-detail-page .empty-title{
+  font-weight:900;
+  color:rgba(255,255,255,0.92);
+}
+
+.movie-detail-page .link-panel{
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.10);
+}
+.movie-detail-page .link-title{ font-weight:900; }
+
+.movie-detail-page .link-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(0,0,0,0.22);
+  border:1px solid rgba(255,255,255,0.10);
+  margin-bottom:10px;
+}
+.movie-detail-page .link-item-title{
+  font-weight:850;
+  color:rgba(255,255,255,0.92);
+}
+
+/* ✅ Comments (SaaS) */
+.js-comment-list > div{
+  border-radius:14px;
+}
+.js-comment-form textarea{
+  min-height:92px;
+  resize:vertical;
+}
+.js-comment-status,
+.js-rating-status{
+  min-height:18px;
+}
+
+/* =========================================================
+   MOVIE DETAIL (RIGHT PANEL) — SaaS polish
+   ========================================================= */
+.detail-card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+}
+
+.detail-poster-wrap{
+  width:100%;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(0,0,0,0.25);
+  aspect-ratio:3 / 4;
+}
+
+.detail-poster{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.detail-body{ padding-top:14px; }
+
+.detail-title{
+  font-weight:900;
+  letter-spacing:-0.02em;
+  margin:0 0 10px;
+}
+
+.detail-label{
+  color:rgba(255,255,255,0.70);
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  margin-bottom:6px;
+}
+
+.detail-desc{
+  color:rgba(255,255,255,0.86);
+  line-height:1.55;
+  margin-bottom:12px;
+  max-height:140px;
+  overflow:auto;
+  padding-right:6px;
+}
+
+.detail-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:grid;
+  gap:8px;
+  color:rgba(255,255,255,0.86);
+  font-size:14px;
+}
+
+.detail-list .k{
+  color:rgba(255,255,255,0.68);
+  font-weight:800;
+  margin-right:6px;
+}
+
+.detail-list .muted{ color:rgba(255,255,255,0.70); }
+
+.detail-desc::-webkit-scrollbar{ width:8px; }
+.detail-desc::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,0.16);
+  border-radius:999px;
+}
+
+@media (min-width:992px){
+  .detail-card{ position:sticky; top:92px; }
 }

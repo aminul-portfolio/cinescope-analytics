@@ -1,31 +1,200 @@
---- about.html ---
+{# src/movie/templates/movie/about.html (UPDATED: adds DE pipeline mention + DailyMetric badge) #}
 {% extends 'base.html' %}
-{% block body %}
-<div class="container mt-5">
-  <div class="text-center mb-4">
-    <h1 class="text-primary">🎬 About Us</h1>
-    <p class="text-muted">Your trusted source for streaming and discovering great movies online.</p>
+
+{% block title %}About | CineScope Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <div class="text-muted small mb-2">CineScope Analytics</div>
+    <h1 class="mb-2" style="font-weight:900; letter-spacing:-0.02em;">🎬 About</h1>
+    <p class="text-muted mb-0" style="max-width: 78ch; margin: 0 auto;">
+      CineScope Analytics is a Django portfolio project that demonstrates a modern movie discovery experience:
+      fast search, smart filters, availability cues, and clean detail pages — packaged with a SaaS-style UI.
+    </p>
   </div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <h3>Our Mission</h3>
-      <p>We aim to make discovering, streaming, and enjoying movies easy and enjoyable for audiences worldwide. Our platform highlights top-rated, trending, and recently added content curated for your taste.</p>
+  <!-- Value + Outcomes -->
+  <div class="row g-4 mb-4">
+
+    <!-- Mission -->
+    <div class="col-lg-6">
+      <div class="card p-4 h-100">
+        <h3 class="mb-2" style="font-weight:800;">Our mission</h3>
+        <p class="text-muted mb-0">
+          Help viewers decide quickly what to watch.
+          The app reduces time-to-choice using keyword search, faceted filters, and “Watch Available” visibility so users
+          don’t waste time clicking dead ends.
+        </p>
+      </div>
     </div>
-    <div class="col-md-6">
-      <h3>What We Offer</h3>
-      <ul>
-        <li>🌟 Top Rated Movies</li>
-        <li>🔥 Most Watched Content</li>
-        <li>📅 Yearly Archives</li>
-        <li>🔍 Smart Filtering by Genre & Language</li>
-        <li>🎥 Direct Watch & Download Links</li>
-      </ul>
+
+    <!-- Why it helps retention -->
+    <div class="col-lg-6">
+      <div class="card p-4 h-100">
+        <h3 class="mb-2" style="font-weight:800;">Why this improves retention</h3>
+        <ul class="mb-0" style="color: rgba(255,255,255,0.85);">
+          <li class="mb-2">✅ Reduces “no result” frustration with broad matching (title/cast/description/genres)</li>
+          <li class="mb-2">✅ Reduces decision fatigue with filters (year/genre/category/duration/sort)</li>
+          <li class="mb-2">✅ Shows watchability instantly via <strong>Watch Available</strong> badges</li>
+          <li class="mb-2">✅ Prioritizes quality with <strong>Top Rated</strong> ordering (rating + rating count)</li>
+          <li class="mb-0">✅ Encourages exploration with related + recommended titles</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Features -->
+  <div class="row g-4">
+
+    <div class="col-lg-7">
+      <div class="card p-4 h-100">
+        <h3 class="mb-3" style="font-weight:800;">Core product features</h3>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">🔍 Search + Discovery</div>
+              <div class="text-muted small mt-1">
+                Keyword search across title, cast, description and many-to-many genres.
+                Smart ordering prioritizes top-rated content when filtering.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">✅ Availability Intelligence</div>
+              <div class="text-muted small mt-1">
+                Movies show <strong>Watch Available</strong> status so users avoid dead-end clicks.
+                Optional “Watch Available only” filter.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">⭐ Per-user Ratings</div>
+              <div class="text-muted small mt-1">
+                Each user can rate a movie once and update later.
+                Aggregates update instantly across movie detail, list/cards, and analytics tables.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">💬 Comments</div>
+              <div class="text-muted small mt-1">
+                SaaS-style comment form and community feed on each movie page (login required).
+                Supports moderation via an <code>is_public</code> flag.
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ NEW: DE pipeline feature -->
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">🏗️ Analytics ETL Pipeline</div>
+              <div class="text-muted small mt-1">
+                Built a repeatable data pipeline: <strong>raw events → DailyMetric aggregates → dashboard + CSV exports</strong>.
+                Supports backfill + daily incremental runs via a management command.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10);">
+              <div style="font-weight:800;">🔐 Accounts</div>
+              <div class="text-muted small mt-1">
+                Signup/login/logout, dashboard access, and password reset flows.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Analytics + Manager dashboard -->
+    <div class="col-lg-5">
+      <div class="card p-4 h-100">
+        <h3 class="mb-3" style="font-weight:800;">Analytics (manager view)</h3>
+        <p class="text-muted mb-3">
+          A staff-only analytics dashboard supports product decisions and operational visibility via:
+        </p>
+
+        <ul class="mb-0" style="color: rgba(255,255,255,0.85);">
+          <li class="mb-2">📅 Date ranges: <strong>7 / 30 / 90 days</strong> (trend + funnel + top tables)</li>
+          <li class="mb-2">📈 Total views (overall interest)</li>
+          <li class="mb-2">▶️ Watches & ❤️ Favorites (range-based)</li>
+          <li class="mb-2">👤 Active users (7d vs selected range)</li>
+          <li class="mb-2">🏆 Top movies / genres / categories</li>
+          <li class="mb-2">⭐ Top rated with rating count confidence</li>
+          <li class="mb-2">🩺 Data Health panel (missing poster/trailer, no watch links, unrated items)</li>
+          <li class="mb-2">⬇️ CSV exports for top tables (enterprise reporting)</li>
+          <li class="mb-0">🏗️ ETL-backed chart sourced from <code>DailyMetric</code> (gold layer)</li>
+        </ul>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.10);">
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          {% if request.user.is_staff %}
+            <a href="{% url 'movie:analytics_dashboard' %}" class="btn btn-warning nav-cta">
+              📊 View Analytics
+            </a>
+          {% endif %}
+          <div class="text-muted small">
+            Note: analytics is restricted to staff users via <code>@staff_member_required</code>.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Built with + CTAs -->
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <div class="card p-4">
+        <h3 class="mb-2" style="font-weight:800;">Built with</h3>
+
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-light text-dark">Django</span>
+          <span class="badge bg-light text-dark">Bootstrap 5</span>
+          <span class="badge bg-light text-dark">Swiper</span>
+          <span class="badge bg-light text-dark">Class-based views</span>
+          <span class="badge bg-light text-dark">Many-to-Many (Genres)</span>
+          <span class="badge bg-light text-dark">Faceted search</span>
+          <span class="badge bg-light text-dark">Per-user ratings</span>
+          <span class="badge bg-light text-dark">Comments + moderation</span>
+          <span class="badge bg-light text-dark">Staff analytics</span>
+          <span class="badge bg-light text-dark">DailyMetric (gold layer)</span>
+          <span class="badge bg-light text-dark">ETL management command</span>
+          <span class="badge bg-light text-dark">CSV exports</span>
+          <span class="badge bg-light text-dark">Data quality checks</span>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.10);">
+
+        <div class="d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
+          <div class="text-muted small">
+            Recruiter note: this project demonstrates product thinking (retention-focused UX) alongside Django engineering.
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Browse movies</a>
+            <a href="{% url 'movie:movie_search' %}?query=" class="btn btn-outline-light nav-btn">Search</a>
+            <a href="{% url 'home' %}" class="btn btn-warning nav-cta">Back to landing</a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <div class="text-center mt-5">
-    <a href="/" class="btn btn-outline-primary">Return to Homepage</a>
-  </div>
 </div>
 {% endblock %}

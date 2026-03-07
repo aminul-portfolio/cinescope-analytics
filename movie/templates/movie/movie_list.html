@@ -1,127 +1,322 @@
+{# src/movie/templates/movie/movie_list.html (UPDATED with new changes) #}
 {% extends 'base.html' %}
 {% load static %}
 
-{% block body %}
-<main class="container mt-4">
+{% block title %}Browse Movies | CineScope Analytics{% endblock %}
 
- <!-- 🎬 Movie Filters -->
-<section class="text-center mb-5">
-  <h2 class="fw-bold text-primary">🎬 Browse Movies</h2>
+{% block content %}
+<div class="container py-4">
 
-  <div class="d-flex justify-content-center flex-wrap gap-4 mt-4">
-
-    <!-- Genre Filter -->
+  <!-- Header -->
+  <div class="catalog-head mb-3">
     <div>
-      <label class="fw-semibold me-2 d-block">🎭 Genre:</label>
-      <div class="d-flex flex-wrap gap-2">
-        {% for cat in genres %}
-          <a href="?category={{ cat }}" class="btn btn-sm {% if selected_category == cat %}btn-primary{% else %}btn-outline-primary{% endif %}">
-            {{ cat|title }}
-          </a>
-        {% endfor %}
+      <div class="catalog-kicker">Catalog</div>
+      <h1 class="catalog-title">Browse Movies</h1>
+      <p class="catalog-subtitle">Search + filter fast, then pick something watchable.</p>
+    </div>
+
+    <div class="catalog-actions">
+      {% if request.GET.query or selected_category or selected_year or selected_genre or selected_sort or selected_status or selected_duration_max or selected_watch_only %}
+        <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Reset filters</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ✅ MERGED SaaS Filter Panel -->
+  <form method="GET" action="{% url 'movie:movie_list' %}" class="card p-3 mb-4 catalog-filter-panel">
+
+    <!-- Top row: search + selects -->
+    <div class="row g-2 align-items-end">
+
+      <div class="col-12 col-lg-4">
+        <label class="form-label text-muted small mb-1">Search</label>
+        <input class="form-control" type="search" name="query"
+               placeholder="Search title, cast, description, genre..."
+               value="{{ request.GET.query|default:'' }}">
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Category</label>
+        <select class="form-select" name="category">
+          <option value="">All</option>
+          <option value="action" {% if selected_category == 'action' %}selected{% endif %}>Action</option>
+          <option value="drama" {% if selected_category == 'drama' %}selected{% endif %}>Drama</option>
+          <option value="comedy" {% if selected_category == 'comedy' %}selected{% endif %}>Comedy</option>
+          <option value="romance" {% if selected_category == 'romance' %}selected{% endif %}>Romance</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Year</label>
+        <select class="form-select" name="year">
+          <option value="">All</option>
+          {% for y in years %}
+            <option value="{{ y|date:'Y' }}" {% if selected_year == y|date:'Y' %}selected{% endif %}>
+              {{ y|date:"Y" }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Genre</label>
+        <select class="form-select" name="genre">
+          <option value="">All</option>
+          {% for g in genres %}
+            <option value="{{ g.name }}" {% if selected_genre|lower == g.name|lower %}selected{% endif %}>
+              {{ g.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Max duration</label>
+        <select class="form-select" name="duration_max">
+          <option value="">Any</option>
+          <option value="60" {% if selected_duration_max == '60' %}selected{% endif %}>≤ 60 min</option>
+          <option value="90" {% if selected_duration_max == '90' %}selected{% endif %}>≤ 90 min</option>
+          <option value="120" {% if selected_duration_max == '120' %}selected{% endif %}>≤ 120 min</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Availability</label>
+        <select class="form-select" name="watch_only">
+          <option value="" {% if not selected_watch_only %}selected{% endif %}>All</option>
+          <option value="1" {% if selected_watch_only == '1' %}selected{% endif %}>Watch Available</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-4 col-lg-2">
+        <label class="form-label text-muted small mb-1">Sort</label>
+        <select class="form-select" name="sort">
+          <option value="" {% if not selected_sort %}selected{% endif %}>Smart (default)</option>
+          <option value="views" {% if selected_sort == 'views' %}selected{% endif %}>Most Watched</option>
+          <option value="rating" {% if selected_sort == 'rating' %}selected{% endif %}>Top Rated</option>
+          <option value="new" {% if selected_sort == 'new' %}selected{% endif %}>Newest</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2 flex-wrap mt-2">
+        <button class="btn btn-warning nav-cta" type="submit">Apply filters</button>
+        <a class="btn btn-outline-light nav-btn" href="{% url 'movie:movie_list' %}">Clear filters</a>
+        <a class="btn btn-outline-light nav-btn"
+           href="{% url 'movie:movie_search' %}{% if request.GET.query %}?query={{ request.GET.query|urlencode }}{% endif %}">
+          Advanced search page
+        </a>
       </div>
     </div>
 
-    <!-- Year Filter -->
-    <div>
-      <label class="fw-semibold me-2 d-block">📅 Year:</label>
-      <div class="d-flex flex-wrap gap-2">
-        {% for y in years %}
-          <a href="{% url 'movie:movie_year' year=y.year %}" class="btn btn-sm btn-outline-info">
-            {{ y.year }}
-          </a>
-        {% endfor %}
+    <!-- Divider -->
+    <hr class="my-3" style="border-color: rgba(255,255,255,0.10);">
+
+    <!-- Bottom row: quick chips -->
+    <div class="row g-3 align-items-start">
+      <div class="col-lg-7">
+        <div class="filter-label">🎭 Quick Genre</div>
+        <div class="filter-row">
+          {% for g in genres %}
+            {# ✅ CHANGE: do NOT carry category when clicking a genre chip (prevents category+genre overlap/confusion) #}
+            <a href="?genre={{ g.name|urlencode }}
+              {% if request.GET.query %}&query={{ request.GET.query|urlencode }}{% endif %}
+              {% if selected_year %}&year={{ selected_year|urlencode }}{% endif %}
+              {% if selected_duration_max %}&duration_max={{ selected_duration_max|urlencode }}{% endif %}
+              {% if selected_watch_only %}&watch_only={{ selected_watch_only|urlencode }}{% endif %}
+              {% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}"
+               class="chip {% if selected_genre|lower == g.name|lower %}chip--active{% endif %}">
+              {{ g.name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="filter-label">📅 Quick Year</div>
+        <div class="filter-row">
+          {% for y in years %}
+            {# ✅ Keep other filters when picking a year (this is usually expected UX) #}
+            <a href="?year={{ y|date:'Y' }}
+              {% if request.GET.query %}&query={{ request.GET.query|urlencode }}{% endif %}
+              {% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}
+              {% if selected_genre %}&genre={{ selected_genre|urlencode }}{% endif %}
+              {% if selected_duration_max %}&duration_max={{ selected_duration_max|urlencode }}{% endif %}
+              {% if selected_watch_only %}&watch_only={{ selected_watch_only|urlencode }}{% endif %}
+              {% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}"
+               class="chip {% if selected_year|stringformat:'s' == y|date:'Y' %}chip--active{% endif %}">
+              {{ y|date:"Y" }}
+            </a>
+          {% endfor %}
+        </div>
       </div>
     </div>
 
-    <!-- Reset Button -->
-    {% if selected_category or selected_year %}
-      <div class="align-self-end">
-        <a href="{% url 'movie:movie_list' %}" class="btn btn-sm btn-secondary mt-2">🔄 Reset Filters</a>
+    <!-- Active filters line -->
+    {% if request.GET.query or selected_category or selected_genre or selected_year or selected_duration_max or selected_watch_only or selected_sort %}
+      <div class="active-filters mt-3">
+        <div class="active-left">
+          <span class="active-label">Active:</span>
+
+          {% if request.GET.query %}
+            <span class="active-pill">Query: {{ request.GET.query }}</span>
+          {% endif %}
+          {% if selected_category %}
+            <span class="active-pill">Category: {{ selected_category|title }}</span>
+          {% endif %}
+          {% if selected_genre %}
+            <span class="active-pill">Genre: {{ selected_genre }}</span>
+          {% endif %}
+          {% if selected_year %}
+            <span class="active-pill">Year: {{ selected_year }}</span>
+          {% endif %}
+          {% if selected_duration_max %}
+            <span class="active-pill">Max: {{ selected_duration_max }} min</span>
+          {% endif %}
+          {% if selected_watch_only == '1' %}
+            <span class="active-pill">Availability: Watch</span>
+          {% endif %}
+          {% if selected_sort %}
+            <span class="active-pill">Sort: {{ selected_sort }}</span>
+          {% endif %}
+        </div>
+
+        <div class="active-right">
+          <a href="{% url 'movie:movie_list' %}" class="btn btn-sm btn-outline-light nav-btn">Clear</a>
+        </div>
       </div>
     {% endif %}
 
+  </form>
+
+  <!-- Results header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="section-title mb-0">Results</h3>
+    <div class="text-muted small">
+      {% if page_obj %}
+        Showing {{ page_obj.object_list|length }} item(s)
+      {% else %}
+        {% if object_list %}Showing {{ object_list|length }} item(s){% else %}No results{% endif %}
+      {% endif %}
+    </div>
   </div>
-</section>
 
+  <!-- Results grid -->
+  {% if object_list %}
+    <div class="catalog-grid">
+      {% for movie in object_list %}
+        <div class="catalog-card">
+          <a href="{% url 'movie:movie_detail' movie.slug %}" class="catalog-link">
 
-  <!-- 🎥 Scrollable Results -->
-  <section class="panel mb-5 position-relative">
-    <h3 class="text-white mb-3">Results</h3>
+            <div class="catalog-media">
+              <img src="{{ movie.image.url }}" alt="{{ movie.title }}"
+                   loading="lazy"
+                   onerror="this.src='{% static 'img/placeholder.png' %}'">
 
-    <!-- ⏪ Scroll Buttons -->
-    <button class="scroll-btn left-btn btn btn-dark rounded-circle shadow" data-target="#movieScroll" aria-label="Previous">
-      <i class="bi bi-chevron-left fs-5"></i>
-    </button>
-    <button class="scroll-btn right-btn btn btn-dark rounded-circle shadow" data-target="#movieScroll" aria-label="Next">
-      <i class="bi bi-chevron-right fs-5"></i>
-    </button>
-
-    <!-- 🔄 Movie Scroll Area -->
-    <div id="movieScroll" class="movie-horizontal-scroll">
-      <div class="scroll-wrapper d-flex gap-4">
-        {% if object_list %}
-          {% for movie in object_list %}
-            <div class="card movie-card bg-dark text-light border-0 shadow-sm" style="width: 200px;">
-              <a href="{% url 'movie:movie_detail' movie.slug %}">
-                <img src="{{ movie.image.url }}" class="card-img-top rounded-top" alt="{{ movie.title }}" onerror="this.src='{% static 'img/placeholder.png' %}'">
-              </a>
-              <div class="card-body p-2 text-center">
-                <h6 class="card-title fw-bold text-white text-truncate" title="{{ movie.title }}">{{ movie.title }}</h6>
-                <p class="card-text small text-muted mb-2">
-                  ⭐ {{ movie.rating }}/10<br>
-                  📅 {{ movie.year_of_production|date:"Y" }} | ⏱ {{ movie.duration }} min
-                </p>
-                <a href="{% url 'movie:movie_detail' movie.slug %}" class="btn btn-sm btn-outline-light">Watch Now</a>
+              <div class="catalog-badges">
+                <span class="badge-soft">⭐ {{ movie.rating }}/10</span>
+                <span class="badge-soft">👥 {{ movie.rating_count|default:0 }}</span>
+                <span class="badge-soft">⏱ {{ movie.duration }}m</span>
               </div>
             </div>
-          {% endfor %}
-        {% else %}
-          <div class="text-center w-100">
-            <h4 class="text-danger">No movies found for the selected filters.</h4>
-          </div>
-        {% endif %}
+
+            <div class="catalog-body">
+              <div class="catalog-name" title="{{ movie.title }}">{{ movie.title }}</div>
+              <div class="catalog-meta">
+                {{ movie.get_category_display }} • {{ movie.year_of_production|date:"Y" }}
+              </div>
+
+              <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+                {% if movie.has_watch %}
+                  <span class="badge bg-success small">Watch Available</span>
+                {% else %}
+                  <span class="badge bg-secondary small">No Watch Link</span>
+                {% endif %}
+              </div>
+
+              {% if movie.genres.all %}
+                <div class="mt-2 d-flex flex-wrap gap-1">
+                  {% for g in movie.genres.all %}
+                    <span class="badge bg-secondary small">{{ g.name }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <div class="catalog-cta mt-2">
+                <span class="btn btn-sm btn-warning hero-cta w-100">View details</span>
+              </div>
+            </div>
+
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card p-4 text-center">
+      <h4 class="mb-2" style="font-weight:800;">No movies found</h4>
+      <div class="text-muted mb-3">Try a different query, genre, or year.</div>
+      <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Browse all</a>
+        <a href="{% url 'home' %}" class="btn btn-warning nav-cta">Back to landing</a>
       </div>
     </div>
-  </section>
+  {% endif %}
 
-  <!-- 📄 Pagination -->
+  <!-- Pagination (preserve filters) -->
   {% if is_paginated %}
     <nav class="mt-4 d-flex justify-content-center">
       <ul class="pagination">
+
         {% if page_obj.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">Previous</a>
+            <a class="page-link"
+               href="?page={{ page_obj.previous_page_number }}
+               {% if request.GET.query %}&query={{ request.GET.query|urlencode }}{% endif %}
+               {% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}
+               {% if selected_genre %}&genre={{ selected_genre|urlencode }}{% endif %}
+               {% if selected_year %}&year={{ selected_year|urlencode }}{% endif %}
+               {% if selected_duration_max %}&duration_max={{ selected_duration_max|urlencode }}{% endif %}
+               {% if selected_watch_only %}&watch_only={{ selected_watch_only|urlencode }}{% endif %}
+               {% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+              Previous
+            </a>
           </li>
         {% endif %}
+
         {% for num in page_obj.paginator.page_range %}
           <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">{{ num }}</a>
+            <a class="page-link"
+               href="?page={{ num }}
+               {% if request.GET.query %}&query={{ request.GET.query|urlencode }}{% endif %}
+               {% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}
+               {% if selected_genre %}&genre={{ selected_genre|urlencode }}{% endif %}
+               {% if selected_year %}&year={{ selected_year|urlencode }}{% endif %}
+               {% if selected_duration_max %}&duration_max={{ selected_duration_max|urlencode }}{% endif %}
+               {% if selected_watch_only %}&watch_only={{ selected_watch_only|urlencode }}{% endif %}
+               {% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+              {{ num }}
+            </a>
           </li>
         {% endfor %}
+
         {% if page_obj.has_next %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_year %}&year={{ selected_year }}{% endif %}">Next</a>
+            <a class="page-link"
+               href="?page={{ page_obj.next_page_number }}
+               {% if request.GET.query %}&query={{ request.GET.query|urlencode }}{% endif %}
+               {% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}
+               {% if selected_genre %}&genre={{ selected_genre|urlencode }}{% endif %}
+               {% if selected_year %}&year={{ selected_year|urlencode }}{% endif %}
+               {% if selected_duration_max %}&duration_max={{ selected_duration_max|urlencode }}{% endif %}
+               {% if selected_watch_only %}&watch_only={{ selected_watch_only|urlencode }}{% endif %}
+               {% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+              Next
+            </a>
           </li>
         {% endif %}
+
       </ul>
     </nav>
   {% endif %}
 
-</main>
-
-<!-- 🧠 Scroll Button Logic -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const scrollAmount = 320;
-    document.querySelectorAll(".scroll-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const targetId = btn.dataset.target;
-        const container = document.querySelector(targetId);
-        const direction = btn.classList.contains("right-btn") ? 1 : -1;
-        container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-      });
-    });
-  });
-</script>
+</div>
 {% endblock %}

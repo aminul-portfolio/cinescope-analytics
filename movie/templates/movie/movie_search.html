@@ -1,3 +1,4 @@
+{# src/movie/templates/movie/movie_search.html (UPDATED with new changes) #}
 {% extends 'base.html' %}
 {% load static %}
 
@@ -6,71 +7,260 @@
 {% block content %}
 <div class="container py-4">
 
-  <!-- Header -->
+  <!-- Header + Search -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
     <div>
       <div class="text-muted small mb-2">Search</div>
       <h1 class="mb-1" style="font-weight:900; letter-spacing:-0.02em;">Results</h1>
-      <p class="text-muted mb-0">
-        {% if request.GET.query %}
-          Showing results for <strong>"{{ request.GET.query }}"</strong>
-        {% else %}
-          Enter a keyword to search by title, cast, or description.
-        {% endif %}
-      </p>
+
+      {% if q %}
+        <p class="text-muted mb-0">
+          Showing results for <strong>"{{ q }}"</strong>
+        </p>
+      {% elif selected_preset %}
+        <p class="text-muted mb-0">
+          Showing <strong>
+            {% if selected_preset == 'trending' %}Trending{% endif %}
+            {% if selected_preset == 'top' %}Top Rated{% endif %}
+            {% if selected_preset == 'new' %}New{% endif %}
+            {% if selected_preset == 'best' %}Best Picks{% endif %}
+          </strong> picks.
+        </p>
+      {% else %}
+        <p class="text-muted mb-0">
+          Enter a keyword to search by title, cast, description, or genre.
+        </p>
+      {% endif %}
     </div>
 
-    <!-- Search again (keeps recruiter-friendly UX) -->
+    <!-- Search bar (preserve preset when searching) -->
     <form class="d-flex nav-search-wrap" method="GET" action="{% url 'movie:movie_search' %}">
-      <input class="form-control nav-search" type="search" name="query" placeholder="Search movies..."
-             aria-label="Search" value="{{ request.GET.query|default:'' }}">
+      {% if selected_preset %}
+        <input type="hidden" name="preset" value="{{ selected_preset }}">
+      {% endif %}
+      <input class="form-control nav-search" type="search" name="query" placeholder="Search movies, genres..."
+             aria-label="Search" value="{{ q|default:'' }}">
       <button class="btn nav-search-btn" type="submit">Search</button>
     </form>
   </div>
 
-  {% if object_list %}
-    <div class="row g-3">
-      {% for movie in object_list %}
-        <div class="col-12 col-sm-6 col-lg-4">
-          <div class="movie-card p-2 h-100">
-            <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
-              <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
-                   onerror="this.src='{% static 'img/placeholder.png' %}'">
+  <!-- Quick Picks (show when no typed query) -->
+  {% if not q %}
+    <div class="card p-3 mb-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <div class="text-muted small">Not sure what to watch?</div>
+          <div style="font-weight:800;">Quick Picks (1 click)</div>
+        </div>
 
-              <div class="p-2">
-                <h6 class="text-light mb-1 movie-title text-truncate" title="{{ movie.title }}">
-                  {{ movie.title }}
-                </h6>
-                <div class="text-muted small movie-meta">
-                  {{ movie.category|title }} • {{ movie.year_of_production|date:"Y" }}
-                </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-sm {% if selected_preset == 'trending' %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}"
+             href="{% url 'movie:movie_search' %}?preset=trending">
+            Trending
+          </a>
 
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                  <span class="badge bg-warning text-dark">⭐ {{ movie.rating }}/10</span>
-                  <span class="btn btn-sm btn-outline-light nav-btn">View</span>
-                </div>
-              </div>
-            </a>
+          <a class="btn btn-sm {% if selected_preset == 'top' %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}"
+             href="{% url 'movie:movie_search' %}?preset=top">
+            Top Rated
+          </a>
+
+          <a class="btn btn-sm {% if selected_preset == 'new' %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}"
+             href="{% url 'movie:movie_search' %}?preset=new">
+            New
+          </a>
+
+          <a class="btn btn-sm {% if selected_preset == 'best' %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}"
+             href="{% url 'movie:movie_search' %}?preset=best">
+            Best Picks
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# ✅ Show filters/results when user has query OR preset #}
+  {% if q or selected_preset %}
+
+    <!-- Filters (faceted refinements) -->
+    <form method="GET" action="{% url 'movie:movie_search' %}" class="card p-3 mb-4">
+      {% if q %}<input type="hidden" name="query" value="{{ q }}">{% endif %}
+      {% if selected_preset %}<input type="hidden" name="preset" value="{{ selected_preset }}">{% endif %}
+
+      <div class="row g-2 align-items-end">
+
+        <div class="col-12 col-md-3">
+          <label class="form-label text-muted small mb-1">Category</label>
+          <select class="form-select" name="category">
+            <option value="">All</option>
+            <option value="action" {% if selected_category == 'action' %}selected{% endif %}>Action</option>
+            <option value="drama" {% if selected_category == 'drama' %}selected{% endif %}>Drama</option>
+            <option value="comedy" {% if selected_category == 'comedy' %}selected{% endif %}>Comedy</option>
+            <option value="romance" {% if selected_category == 'romance' %}selected{% endif %}>Romance</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-2">
+          <label class="form-label text-muted small mb-1">Year</label>
+          <select class="form-select" name="year">
+            <option value="">All</option>
+            {% for y in year_facets %}
+              <option value="{{ y|date:'Y' }}" {% if selected_year == y|date:'Y' %}selected{% endif %}>
+                {{ y|date:"Y" }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-12 col-md-3">
+  <label class="form-label text-muted small mb-1">Genre</label>
+  <select class="form-select" name="genre">
+    <option value="">All</option>
+    {% for g in genre_facets %}
+      <option value="{{ g.name }}" {% if selected_genre|lower == g.name|lower %}selected{% endif %}>
+        {{ g.name }} ({{ g.count }})
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+        <div class="col-12 col-md-2">
+          <label class="form-label text-muted small mb-1">Max duration</label>
+          <select class="form-select" name="duration_max">
+            <option value="">Any</option>
+            <option value="60" {% if selected_duration_max == '60' %}selected{% endif %}>≤ 60 min</option>
+            <option value="90" {% if selected_duration_max == '90' %}selected{% endif %}>≤ 90 min</option>
+            <option value="120" {% if selected_duration_max == '120' %}selected{% endif %}>≤ 120 min</option>
+          </select>
+        </div>
+
+        <!-- Availability -->
+        <div class="col-12 col-md-2">
+          <label class="form-label text-muted small mb-1">Availability</label>
+          <select class="form-select" name="watch_only">
+            <option value="" {% if not selected_watch_only %}selected{% endif %}>All</option>
+            <option value="1" {% if selected_watch_only == '1' %}selected{% endif %}>Watch Available</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-2">
+          <label class="form-label text-muted small mb-1">Sort</label>
+          <select class="form-select" name="sort">
+            <option value="" {% if not selected_sort %}selected{% endif %}>Smart (default)</option>
+            <option value="views" {% if selected_sort == 'views' %}selected{% endif %}>Most Watched</option>
+            <option value="rating" {% if selected_sort == 'rating' %}selected{% endif %}>Top Rated</option>
+            <option value="new" {% if selected_sort == 'new' %}selected{% endif %}>Newest</option>
+          </select>
+        </div>
+
+        <div class="col-12 d-flex gap-2 flex-wrap mt-2">
+          <button class="btn btn-warning nav-cta" type="submit">Apply filters</button>
+
+          {# Clear while preserving preset if it exists #}
+          {% if selected_preset %}
+            <a class="btn btn-outline-light nav-btn" href="{% url 'movie:movie_search' %}?preset={{ selected_preset|urlencode }}">Clear filters</a>
+          {% else %}
+            <a class="btn btn-outline-light nav-btn" href="{% url 'movie:movie_search' %}?query={{ q|urlencode }}">Clear filters</a>
+          {% endif %}
+        </div>
+
+      </div>
+    </form>
+
+    <!-- Category results FIRST (if available) -->
+    {% if category_facets %}
+      <div class="card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <div class="text-muted small">Refine by</div>
+            <div style="font-weight:800;">Categories</div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2">
+            {% for c in category_facets %}
+              <a class="btn btn-sm btn-outline-light nav-btn"
+                 href="{% url 'movie:movie_search' %}?
+                 {% if q %}query={{ q|urlencode }}&{% endif %}
+                 {% if selected_preset %}preset={{ selected_preset|urlencode }}&{% endif %}
+                 {% if selected_year %}year={{ selected_year|urlencode }}&{% endif %}
+                 {% if selected_genre %}genre={{ selected_genre|urlencode }}&{% endif %}
+                 {% if selected_duration_max %}duration_max={{ selected_duration_max|urlencode }}&{% endif %}
+                 {% if selected_watch_only %}watch_only={{ selected_watch_only|urlencode }}&{% endif %}
+                 {% if selected_sort %}sort={{ selected_sort|urlencode }}&{% endif %}
+                 category={{ c.key|urlencode }}">
+                 {{ c.label }} ({{ c.count }})
+              </a>
+            {% endfor %}
           </div>
         </div>
-      {% endfor %}
-    </div>
+      </div>
+    {% endif %}
 
-  {% else %}
-    <div class="card p-4 text-center">
-      <h4 class="mb-2" style="font-weight:800;">No results found</h4>
-      <div class="text-muted mb-3">
-        {% if request.GET.query %}
-          Try another keyword, or browse by category/year.
-        {% else %}
-          Type something in the search box to begin.
-        {% endif %}
+    <!-- Results -->
+    {% if object_list %}
+      <div class="row g-3">
+        {% for movie in object_list %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="movie-card p-2 h-100">
+              <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+                <img src="{{ movie.image.url }}"
+                     class="movie-poster"
+                     alt="{{ movie.title }}"
+                     loading="lazy"
+                     onerror="this.src='{% static 'img/placeholder.png' %}'">
+
+                <div class="p-2">
+                  <h6 class="text-light mb-1 movie-title text-truncate" title="{{ movie.title }}">
+                    {{ movie.title }}
+                  </h6>
+
+                  <div class="text-muted small movie-meta">
+                    {{ movie.get_category_display }} • {{ movie.year_of_production|date:"Y" }}
+                  </div>
+
+                  <!-- Availability badge -->
+                  <div class="mt-2 d-flex flex-wrap gap-2 align-items-center">
+                    {% if movie.has_watch %}
+                      <span class="badge bg-success small">Watch Available</span>
+                    {% else %}
+                      <span class="badge bg-secondary small">No Watch Link</span>
+                    {% endif %}
+                  </div>
+
+                  {% if movie.genres.all %}
+                    <div class="mt-2 d-flex flex-wrap gap-1">
+                      {% for g in movie.genres.all %}
+                        <span class="badge bg-secondary small">{{ g.name }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  <div class="d-flex justify-content-between align-items-center mt-2">
+                    {# ✅ UPDATED: show avg + count #}
+                    <span class="badge bg-warning text-dark">
+                      ⭐ {{ movie.rating }}/10 <span class="text-muted">({{ movie.rating_count|default:0 }})</span>
+                    </span>
+                    <span class="btn btn-sm btn-outline-light nav-btn">View</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
       </div>
-      <div class="d-flex gap-2 justify-content-center flex-wrap">
-        <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Browse movies</a>
-        <a href="{% url 'home' %}" class="btn btn-warning nav-cta">Back to landing</a>
+
+    {% else %}
+      <div class="card p-4 text-center">
+        <h4 class="mb-2" style="font-weight:800;">No results found</h4>
+        <div class="text-muted mb-3">
+          Try another keyword, or use category/year/genre/duration/availability filters above.
+        </div>
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+          <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">Browse movies</a>
+          <a href="{% url 'home' %}" class="btn btn-warning nav-cta">Back to landing</a>
+        </div>
       </div>
-    </div>
+    {% endif %}
+
   {% endif %}
 
 </div>

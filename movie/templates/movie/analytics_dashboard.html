@@ -1,0 +1,602 @@
+{# src/movie/templates/movie/analytics_dashboard.html (UPDATED: ETL chart + ETL run log + ETL parity + stale warning) #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Analytics Dashboard | CineScope Analytics{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-2">Staff Analytics</div>
+      <h1 class="mb-1" style="font-weight:900; letter-spacing:-0.02em;">Platform Dashboard</h1>
+
+      <div class="text-muted small">
+        Date range: <strong>{{ range_label|default:"Last 30 days" }}</strong>
+      </div>
+
+      <p class="text-muted mb-0">Engagement, journey funnel, and content performance.</p>
+
+      <!-- ✅ Date range chips -->
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <a href="?days=7" class="btn btn-sm {% if days == 7 %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}">Last 7d</a>
+        <a href="?days=30" class="btn btn-sm {% if days == 30 %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}">Last 30d</a>
+        <a href="?days=90" class="btn btn-sm {% if days == 90 %}btn-warning nav-cta{% else %}btn-outline-light nav-btn{% endif %}">Last 90d</a>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'admin:index' %}" class="btn btn-outline-light nav-btn">Admin</a>
+      <a href="{% url 'movie:movie_list' %}" class="btn btn-warning nav-cta">Movies</a>
+
+      <!-- ✅ CSV exports -->
+      <a href="{% url 'movie:export_top_watches_csv' %}?days={{ days|default:30 }}"
+         class="btn btn-outline-light nav-btn">Export Watches CSV</a>
+
+      <a href="{% url 'movie:export_top_favorites_csv' %}?days={{ days|default:30 }}"
+         class="btn btn-outline-light nav-btn">Export Favorites CSV</a>
+
+      <a href="{% url 'movie:export_top_rated_csv' %}"
+         class="btn btn-outline-light nav-btn">Export Top Rated CSV</a>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card p-3">
+        <div class="text-muted small">Total Views</div>
+        <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_views }}</div>
+        <div class="text-muted small mt-1">All-time views_count</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card p-3">
+        <div class="text-muted small">Watches ({{ days }}d)</div>
+        <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_watches_range }}</div>
+        <div class="text-muted small mt-1">Watch intent proxy</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card p-3">
+        <div class="text-muted small">Favorites ({{ days }}d)</div>
+        <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_favorites_range }}</div>
+        <div class="text-muted small mt-1">Preference signal</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card p-3">
+        <div class="text-muted small">Active Users (7d / {{ days }}d)</div>
+        <div style="font-size:1.8rem; font-weight:900;">
+          {{ kpi_active_users_7d }}
+          <span class="text-muted" style="font-size:1rem;">/ {{ kpi_active_users_range }}</span>
+        </div>
+        <div class="text-muted small mt-1">Repeat engagement (non-anonymous)</div>
+      </div>
+    </div>
+
+    <!-- ✅ Watch Available KPI -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card p-3">
+        <div class="text-muted small">Watch Available</div>
+        <div style="font-size:1.8rem; font-weight:900;">{{ watch_available_count|default:0 }}</div>
+        <div class="text-muted small mt-1">Movies with watch links</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Data Health panel -->
+  <div class="card p-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div>
+        <div class="text-muted small">Operations</div>
+        <h5 class="mb-0" style="font-weight:800;">🩺 Data Health</h5>
+      </div>
+      <div class="text-muted small">Total movies: <strong>{{ movies_total }}</strong></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Missing Poster</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ missing_poster_count }}</div>
+          <div class="text-muted small mt-1">Image is empty/null</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Missing Trailer</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ missing_trailer_count }}</div>
+          <div class="text-muted small mt-1">Trailer URL is empty</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">No Watch Link</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ no_watch_count }}</div>
+          <div class="text-muted small mt-1">No MovieLinks type “W”</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Unrated Movies</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ unrated_count }}</div>
+          <div class="text-muted small mt-1">rating_count = 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ ETL Parity / Data Quality (DE credibility) -->
+  <div class="card p-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div>
+        <div class="text-muted small">Data Engineering</div>
+        <h5 class="mb-0" style="font-weight:800;">🧪 ETL Parity Check</h5>
+        <div class="text-muted small">Raw tables vs Gold layer (DailyMetric)</div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        {% if etl_is_stale %}
+          <span class="badge bg-danger">ETL STALE</span>
+        {% else %}
+          <span class="badge bg-success">ETL FRESH</span>
+        {% endif %}
+
+        {% if etl_last_run %}
+          <span class="text-muted small">
+            Last run: <strong>{{ etl_last_run.finished_at|date:"Y-m-d H:i" }}</strong>
+          </span>
+        {% else %}
+          <span class="text-muted small">Last run: —</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">RAW Watches ({{ days }}d)</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ kpi_total_watches_range }}</div>
+          <div class="text-muted small mt-1">Source: WatchHistory</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">ETL Watches ({{ days }}d)</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ etl_watches_sum|default:0 }}</div>
+          <div class="text-muted small mt-1">Source: DailyMetric</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">RAW Favorites ({{ days }}d)</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ kpi_total_favorites_range }}</div>
+          <div class="text-muted small mt-1">Source: Favorite</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">ETL Favorites ({{ days }}d)</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ etl_favorites_sum|default:0 }}</div>
+          <div class="text-muted small mt-1">Source: DailyMetric</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3" style="border-color: rgba(255,255,255,0.10);">
+
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+      <div class="text-muted small">
+        Expected: deltas should be near <strong>0</strong>. If non-zero, ETL may be stale or range logic differs.
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <span class="badge bg-secondary">Δ Watches: {{ etl_watches_delta|default:0 }}</span>
+        <span class="badge bg-secondary">Δ Favorites: {{ etl_favorites_delta|default:0 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ ETL Run Log (enterprise observability) -->
+  <div class="card p-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div>
+        <div class="text-muted small">Operations</div>
+        <h5 class="mb-0" style="font-weight:800;">🧾 ETL Run Log</h5>
+      </div>
+      <div class="text-muted small">Job: <strong>{{ etl_job_name|default:"build_daily_metrics" }}</strong></div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Range</th>
+            <th class="text-end">Rows</th>
+            <th class="text-end">Duration</th>
+            <th class="text-end">Started</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in etl_recent_runs %}
+            <tr>
+              <td>
+                {% if r.status == "SUCCESS" %}
+                  <span class="badge bg-success">SUCCESS</span>
+                {% else %}
+                  <span class="badge bg-danger">FAILED</span>
+                {% endif %}
+              </td>
+              <td><span class="text-muted small">{{ r.range_start }} → {{ r.range_end }}</span></td>
+              <td class="text-end"><span class="badge bg-secondary">{{ r.rows_updated }}</span></td>
+              <td class="text-end"><span class="badge bg-info text-dark">{{ r.duration_ms }} ms</span></td>
+              <td class="text-end"><span class="text-muted small">{{ r.started_at|date:"Y-m-d H:i" }}</span></td>
+              <td>
+                {% if r.error_message %}
+                  <span class="text-danger small">{{ r.error_message|truncatechars:80 }}</span>
+                {% else %}
+                  <span class="text-muted small">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-muted">No ETL runs recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ✅ Funnel (range-based keys) -->
+  <div class="card p-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <div>
+        <div class="text-muted small">Customer journey</div>
+        <h5 class="mb-0" style="font-weight:800;">🧭 Funnel ({{ days }}d)</h5>
+      </div>
+      <div class="text-muted small">Range: <strong>{{ range_label }}</strong></div>
+    </div>
+
+    {% if request.GET.debug == "1" %}
+      <div class="text-muted small">
+        DEBUG: events_range_total={{ events_range_total|default:"—" }}
+        • journey_events_range_total={{ journey_events_range_total|default:"—" }}
+      </div>
+    {% endif %}
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Search sessions (base)</div>
+          <div style="font-weight:900; font-size:1.35rem;">{{ kpi_anon_sessions_range|default:0 }}</div>
+          <div class="text-muted small mt-1">Base = 100%</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Searches</div>
+          <div style="font-weight:900; font-size:1.35rem;">
+            {{ kpi_searches_range|default:0 }}
+            {% with s2s=sessions_to_search_pct|default:0 %}
+              <span class="text-muted" style="font-size:0.95rem;">
+                ({% if s2s > 100 %}100{% else %}{{ s2s }}{% endif %}%)
+              </span>
+            {% endwith %}
+          </div>
+          <div class="text-muted small mt-1">Sessions → Search</div>
+          <div class="text-muted small">Overall: {{ search_rate_pct|default:0 }}%</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Detail views</div>
+          <div style="font-weight:900; font-size:1.35rem;">
+            {{ kpi_detail_views_range|default:0 }}
+            {% with s2d=search_to_detail_pct|default:0 %}
+              <span class="text-muted" style="font-size:0.95rem;">
+                ({% if s2d > 100 %}100{% else %}{{ s2d }}{% endif %}%)
+              </span>
+            {% endwith %}
+          </div>
+          <div class="text-muted small mt-1">Search → Detail • Overall: {{ detail_rate_pct|default:0 }}%</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Watch clicks</div>
+          <div style="font-weight:900; font-size:1.35rem;">
+            {{ kpi_watch_clicks_range|default:0 }}
+            {% with d2w=detail_to_watch_pct|default:0 %}
+              <span class="text-muted" style="font-size:0.95rem;">
+                ({% if d2w > 100 %}100{% else %}{{ d2w }}{% endif %}%)
+              </span>
+            {% endwith %}
+          </div>
+          <div class="text-muted small mt-1">Detail → Watch • Overall: {{ watch_rate_pct|default:0 }}%</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg">
+        <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
+          <div class="text-muted small">Signups</div>
+          <div style="font-weight:900; font-size:1.35rem;">
+            {{ kpi_signups_range|default:0 }}
+            {% with w2s=watch_to_signup_pct|default:0 %}
+              <span class="text-muted" style="font-size:0.95rem;">
+                ({% if w2s > 100 %}100{% else %}{{ w2s }}{% endif %}%)
+              </span>
+            {% endwith %}
+          </div>
+          <div class="text-muted small mt-1">Watch → Signup • Overall: {{ signup_rate_pct|default:0 }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trends + Categories -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-lg-8">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0" style="font-weight:800;">📈 Watches & Favorites Trend ({{ days }}d)</h5>
+          <span class="text-muted small">Daily totals (raw tables)</span>
+        </div>
+
+        {{ labels|json_script:"labels-data" }}
+        {{ watches_series|json_script:"watches-data" }}
+        {{ favorites_series|json_script:"favorites-data" }}
+
+        <canvas id="trendChart" height="110"></canvas>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card p-3">
+        <h5 class="mb-3" style="font-weight:800;">🏷️ Top Categories ({{ days }}d)</h5>
+        <div class="d-flex flex-column gap-2">
+          {% for c in top_categories %}
+            <div class="d-flex justify-content-between">
+              <span>{{ c.category|title }}</span>
+              <span class="badge bg-warning text-dark">{{ c.watch_count }}</span>
+            </div>
+          {% empty %}
+            <div class="text-muted">No data yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ ETL-backed trend (DailyMetric gold layer) -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+          <div>
+            <h5 class="mb-0" style="font-weight:800;">🏗️ ETL Daily Metrics Trend ({{ days }}d)</h5>
+            <div class="text-muted small">Source: DailyMetric (gold layer)</div>
+          </div>
+          <span class="text-muted small">Watches + Favorites</span>
+        </div>
+
+        {{ dm_watches_series|json_script:"dm-watches-data" }}
+        {{ dm_favorites_series|json_script:"dm-favorites-data" }}
+
+        <canvas id="dmTrendChart" height="95"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tables -->
+  <div class="row g-3">
+    <!-- Top Movies by Watches -->
+    <div class="col-12 col-lg-6">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h5 class="mb-0" style="font-weight:800;">🎬 Top Movies by Watches ({{ days }}d)</h5>
+          <div class="text-muted small">Sorted: Watches → Rating → Rating Count</div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Movie</th>
+                <th class="text-end">Watches</th>
+                <th class="text-end">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in top_movies_watches %}
+                <tr>
+                  <td>
+                    <a class="text-decoration-none text-light" href="{% url 'movie:movie_detail' m.slug %}">
+                      {{ m.title }}
+                    </a>
+                    <div class="text-muted small">{{ m.get_category_display }} • {{ m.year_of_production|date:"Y" }}</div>
+                  </td>
+                  <td class="text-end"><span class="badge bg-info text-dark">{{ m.watch_count }}</span></td>
+                  <td class="text-end">
+                    <span class="badge bg-warning text-dark">
+                      ⭐ {{ m.rating }} <span class="text-muted">({{ m.rating_count|default:0 }})</span>
+                    </span>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="3" class="text-muted">No watch data yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Movies by Favorites -->
+    <div class="col-12 col-lg-6">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h5 class="mb-0" style="font-weight:800;">❤️ Top Movies by Favorites ({{ days }}d)</h5>
+          <div class="text-muted small">Sorted: Favorites → Rating → Rating Count</div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Movie</th>
+                <th class="text-end">Favorites</th>
+                <th class="text-end">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in top_movies_favorites %}
+                <tr>
+                  <td>
+                    <a class="text-decoration-none text-light" href="{% url 'movie:movie_detail' m.slug %}">
+                      {{ m.title }}
+                    </a>
+                    <div class="text-muted small">{{ m.get_category_display }} • {{ m.year_of_production|date:"Y" }}</div>
+                  </td>
+                  <td class="text-end"><span class="badge bg-success">{{ m.fav_count }}</span></td>
+                  <td class="text-end">
+                    <span class="badge bg-warning text-dark">
+                      ⭐ {{ m.rating }} <span class="text-muted">({{ m.rating_count|default:0 }})</span>
+                    </span>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="3" class="text-muted">No favorite data yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Rated -->
+    <div class="col-12">
+      <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h5 class="mb-0" style="font-weight:800;">⭐ Top Movies by Rating (all-time)</h5>
+          <div class="text-muted small">Sorted: Rating → Rating Count → Views</div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Movie</th>
+                <th class="text-end">Rating</th>
+                <th class="text-end">Ratings</th>
+                <th class="text-end">Views</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for m in top_movies_rated %}
+                <tr>
+                  <td>
+                    <a class="text-decoration-none text-light" href="{% url 'movie:movie_detail' m.slug %}">
+                      {{ m.title }}
+                    </a>
+                    <div class="text-muted small">{{ m.get_category_display }} • {{ m.year_of_production|date:"Y" }}</div>
+                  </td>
+                  <td class="text-end"><span class="badge bg-warning text-dark">⭐ {{ m.rating }}</span></td>
+                  <td class="text-end"><span class="badge bg-secondary">{{ m.rating_count|default:0 }}</span></td>
+                  <td class="text-end"><span class="badge bg-info text-dark">{{ m.views_count }}</span></td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-muted">No ratings yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Genres -->
+    <div class="col-12">
+      <div class="card p-3">
+        <h5 class="mb-3" style="font-weight:800;">🎭 Top Genres by Watches ({{ days }}d)</h5>
+        <div class="d-flex flex-wrap gap-2">
+          {% for g in top_genres %}
+            <span class="badge bg-secondary">{{ g.name }} • {{ g.watch_count }}</span>
+          {% empty %}
+            <span class="text-muted">No genre data yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Raw series chart
+  const labels = JSON.parse(document.getElementById("labels-data").textContent);
+  const watches = JSON.parse(document.getElementById("watches-data").textContent);
+  const favorites = JSON.parse(document.getElementById("favorites-data").textContent);
+
+  const ctx = document.getElementById('trendChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Watches', data: watches, tension: 0.35 },
+        { label: 'Favorites', data: favorites, tension: 0.35 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#ffffff' } } },
+      scales: {
+        x: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+        y: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+      }
+    }
+  });
+
+  // ETL-backed chart (DailyMetric)
+  const dmWatches = JSON.parse(document.getElementById("dm-watches-data").textContent);
+  const dmFavorites = JSON.parse(document.getElementById("dm-favorites-data").textContent);
+
+  const dmCtx = document.getElementById('dmTrendChart');
+  new Chart(dmCtx, {
+    type: 'line',
+    data: {
+      labels: labels, // reuse same labels
+      datasets: [
+        { label: 'ETL Watches', data: dmWatches, tension: 0.35 },
+        { label: 'ETL Favorites', data: dmFavorites, tension: 0.35 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#ffffff' } } },
+      scales: {
+        x: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+        y: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,123 +1,570 @@
+{# src/movie/templates/movie/movie_detail.html (UPDATED: adds SaaS Comments section + AJAX, keeps your rating + tracking) #}
 {% extends 'base.html' %}
 {% load static %}
 {% load movie_filters %}
 
-{% block body %}
-<main class="page-wrapper" style="background-color: #0d0d0d; color: white; padding: 40px 20px;">
-  <div class="centered-content">
+{% block title %}{{ object.title }} | CineScope Analytics{% endblock %}
 
-    <!-- 🎬 Trailer -->
-   <section class="section-block">
-      <h2 class="section-title">🎬 Trailer</h2>
-      <div class="trailer-box">
-        <iframe
-          src="{{ object.trailer_url }}"
-          title="{{ object.title }} Trailer"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+{% block content %}
+<div class="container py-4 movie-detail-page">
+
+  <!-- Header -->
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+    <div>
+      <div class="text-muted small mb-2">Movie Detail</div>
+
+      <h1 class="mb-2 page-title">{{ object.title }}</h1>
+
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        {# ✅ UPDATED: show avg + count #}
+        <span class="badge bg-warning text-dark">
+          ⭐ <span class="js-avg-rating">{{ object.rating }}</span>/10
+          <span class="text-muted">(<span class="js-rating-count">{{ object.rating_count|default:0 }}</span>)</span>
+        </span>
+        <span class="badge bg-secondary">⏱ {{ object.duration }} min</span>
+        <span class="badge bg-info text-dark">👁️ {{ object.views_count }} views</span>
+
+        {% for genre in object.genres.all %}
+          <span class="badge bg-secondary">{{ genre.name }}</span>
+        {% empty %}
+          <span class="badge bg-secondary">No genres</span>
+        {% endfor %}
       </div>
-  </section>
+    </div>
 
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light nav-btn">← Back to Movies</a>
 
-    <!-- 🎞️ Movie Info -->
-    <section class="section-block movie-info d-flex flex-column flex-md-row gap-4 align-items-start">
-      <img
-        src="{{ object.image.url }}"
-        alt="{{ object.title }}"
-        class="movie-image img-fluid rounded shadow"
-        style="max-width: 300px;"
-        onerror="this.src='{% static 'img/placeholder.png' %}'"
-      >
-      <div class="movie-details flex-grow-1">
-        <h2 class="text-info">{{ object.title }}</h2>
-        <ul class="list-unstyled">
-          <li><strong>📝 Description:</strong> {{ object.description }}</li>
-          <li><strong>🎭 Genres:</strong>
-            {% for genre in object.genres.all %}
-              <span class="badge bg-warning text-dark">{{ genre.name }}</span>
-            {% empty %} N/A {% endfor %}
-          </li>
-          <li><strong>👥 Cast:</strong> {{ object.cast }}</li>
-          <li><strong>⭐ Rating:</strong> {{ object.rating }}/10</li>
-          <li><strong>⏱ Duration:</strong> {{ object.duration }} minutes</li>
-          <li><strong>👁 Views:</strong> {{ object.views_count }}</li>
-        </ul>
-      </div>
-    </section>
+      <a href="{% url 'movie:movie_search' %}?query={{ object.title|urlencode }}"
+         class="btn btn-warning nav-cta">
+        Search similar
+      </a>
 
-    <!-- 🔗 Watch & Download Links -->
-    <section class="section-block">
-      <h2 class="section-title text-center mb-4">🔗 Watch & Download</h2>
-      <div class="row g-4">
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'movie:toggle_favorite' object.slug %}"
+           class="btn btn-outline-light nav-btn">
+          {% if is_favorited %}♥ Liked{% else %}♡ Like{% endif %}
+        </a>
 
-        <!-- 📥 Download Cards -->
-        <div class="col-md-6">
-          <h4 class="text-warning mb-3">📥 Download Links</h4>
-          <div class="row g-3">
-            {% for link in links %}
-              {% if link.type == "D" %}
-              <div class="col-12">
-                <div class="card bg-dark border border-warning shadow-sm">
-                  <div class="card-body">
-                    <h5 class="card-title text-white">Download {{ forloop.counter }}</h5>
-                    <p class="card-text text-muted">High quality download available.</p>
-                    <a href="{{ link.link }}" target="_blank" class="btn btn-warning text-dark" aria-label="Download movie {{ object.title }}">Download</a>
-                  </div>
-                </div>
-              </div>
-              {% endif %}
-            {% endfor %}
+        <a href="{% url 'movie:mark_watched' object.slug %}"
+           class="btn btn-success">
+          ▶ Mark Watched
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ✅ Rating block -->
+  {% if request.user.is_authenticated %}
+    <div class="card p-3 mt-3"
+         style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <div class="text-muted small">Your rating (1–10)</div>
+          <div class="fw-bold js-my-rating">
+            {% if my_rating %}You rated: ⭐ <span class="js-my-rating-value">{{ my_rating }}</span>/10{% else %}Not rated yet{% endif %}
           </div>
         </div>
 
-        <!-- ▶️ Watch Cards -->
-        <div class="col-md-6">
-          <h4 class="text-success mb-3">▶️ Watch Links</h4>
-          <div class="row g-3">
-            {% for link in links %}
-              {% if link.type == "W" %}
-              <div class="col-12">
-                <div class="card bg-dark border border-success shadow-sm">
-                  <div class="card-body">
-                    <h5 class="card-title text-white">Watch {{ forloop.counter }}</h5>
-                    <p class="card-text text-muted">Stream this movie online instantly.</p>
-                    <a href="{{ link.link }}" target="_blank" class="btn btn-success" aria-label="Watch movie {{ object.title }}">Watch Now</a>
-                  </div>
-                </div>
-              </div>
-              {% endif %}
-            {% endfor %}
+        <form method="POST"
+              action="{% url 'movie:rate_movie' object.slug %}"
+              class="d-flex gap-2 align-items-end flex-wrap js-rating-form">
+          {% csrf_token %}
+          <div>
+            <label class="form-label text-muted small mb-1">Rating</label>
+            {{ rating_form.rating }}
+            {% if rating_form.rating.errors %}
+              <div class="text-danger small mt-1">{{ rating_form.rating.errors }}</div>
+            {% endif %}
           </div>
+
+          <button type="submit" class="btn btn-warning nav-cta">
+            {% if my_rating %}Update{% else %}Submit{% endif %}
+          </button>
+
+          <div class="text-muted small js-rating-status" style="min-width: 140px;"></div>
+        </form>
+      </div>
+
+      <div class="text-muted small mt-2">
+        This updates the global movie rating automatically.
+        <span class="ms-2">Current: <span class="fw-bold js-avg-rating">{{ object.rating }}</span>/10</span>
+        <span class="ms-2">(<span class="js-rating-count">{{ object.rating_count|default:0 }}</span> ratings)</span>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-secondary mt-3"
+         style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.10);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <div class="fw-bold">Rate this movie</div>
+          <div class="text-muted small">Login to submit a 1–10 rating. No text reviews.</div>
+        </div>
+        <a href="{% url 'movie:login' %}" class="btn btn-outline-light nav-btn">Login</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="card p-3 mt-4"
+       style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div>
+        <div class="text-muted small">Community</div>
+        <h5 class="mb-0" style="font-weight:800;">💬 Comments</h5>
+      </div>
+      <div class="text-muted small">
+        Showing {{ comments|length }} latest
+      </div>
+    </div>
+
+    {% if request.user.is_authenticated %}
+      <form method="POST"
+            action="{% url 'movie:add_comment' object.slug %}"
+            class="js-comment-form">
+        {% csrf_token %}
+
+        <div class="mb-2">
+          <label class="form-label text-muted small mb-1">Add a comment</label>
+          {{ comment_form.body }}
+          {% if comment_form.body.errors %}
+            <div class="text-danger small mt-1">{{ comment_form.body.errors }}</div>
+          {% endif %}
         </div>
 
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="text-muted small js-comment-status"></div>
+          <button type="submit" class="btn btn-warning nav-cta">Post comment</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="alert alert-secondary mb-3"
+           style="background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.10);">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <div class="fw-bold">Join the discussion</div>
+            <div class="text-muted small">Login to post a comment.</div>
+          </div>
+          <a href="{% url 'movie:login' %}" class="btn btn-outline-light nav-btn">Login</a>
+        </div>
       </div>
-    </section>
+    {% endif %}
 
-    <!-- 🎬 Related Movies -->
-    {% if related_movies %}
-    <section class="section-block">
-      <h2 class="section-title">🎬 Related Movies</h2>
+    <hr class="my-3" style="border-color: rgba(255,255,255,0.10);">
+
+    <div class="d-flex flex-column gap-3 js-comment-list">
+      {% for c in comments %}
+        <div class="p-3 rounded"
+             style="background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="fw-bold">{{ c.user.username|default:"User" }}</div>
+            <div class="text-muted small">{{ c.created_at|date:"M d, Y H:i" }}</div>
+          </div>
+          <div class="mt-2 text-light" style="white-space: pre-wrap;">{{ c.body }}</div>
+        </div>
+      {% empty %}
+        <div class="text-muted">No comments yet. Be the first to comment.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row g-4 mt-2">
+
+    <!-- Left: Trailer + Links -->
+    <div class="col-lg-7">
+
+      <!-- Trailer -->
+      <div class="card p-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0 section-h4">🎬 Trailer</h4>
+          {% if object.trailer_url %}
+            <span class="badge bg-success">Available</span>
+          {% else %}
+            <span class="badge bg-secondary">Not available</span>
+          {% endif %}
+        </div>
+
+        {% if object.trailer_url %}
+          <div class="ratio ratio-16x9 rounded overflow-hidden trailer-frame">
+            <iframe
+              src="{{ object.trailer_url }}"
+              title="{{ object.title }} Trailer"
+              allowfullscreen
+              loading="lazy"></iframe>
+          </div>
+          <div class="text-muted small mt-2">
+            Tip: Use an embeddable URL (YouTube “embed” link works best).
+          </div>
+        {% else %}
+          <div class="empty-state text-center">
+            <div class="empty-title">Trailer not added yet</div>
+            <div class="text-muted small mt-1">
+              Add an embeddable trailer URL in the admin panel to show it here.
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Watch & Download -->
+      <div class="card p-3">
+        <h4 class="mb-3 text-center section-h4">🔗 Watch & Download</h4>
+
+        <div class="row g-3">
+
+          <!-- Download -->
+          <div class="col-md-6">
+            <div class="link-panel">
+              <h5 class="mb-3 link-title">📥 Download Links</h5>
+
+              {% if links %}
+                {% for link in links %}
+                  {% if link.type == "D" %}
+                    <div class="link-item">
+                      <div>
+                        <div class="link-item-title">Download</div>
+                        <div class="text-muted small">External link</div>
+                      </div>
+
+                      <a href="{{ link.link }}"
+                         target="_blank"
+                         rel="noopener"
+                         class="btn btn-warning btn-sm nav-cta js-track-link"
+                         data-event="download_click"
+                         data-movie-id="{{ object.id }}"
+                         data-link-type="D">
+                        Download
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+
+                <div class="text-muted small mt-2">
+                  If nothing appears above, no download links are saved for this movie.
+                </div>
+              {% else %}
+                <div class="text-muted">No download links available.</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Watch -->
+          <div class="col-md-6">
+            <div class="link-panel">
+              <h5 class="mb-3 link-title">▶️ Watch Links</h5>
+
+              {% if links %}
+                {% for link in links %}
+                  {% if link.type == "W" %}
+                    <div class="link-item">
+                      <div>
+                        <div class="link-item-title">Watch</div>
+                        <div class="text-muted small">External stream</div>
+                      </div>
+
+                      <a href="{{ link.link }}"
+                         target="_blank"
+                         rel="noopener"
+                         class="btn btn-success btn-sm js-track-link"
+                         data-event="watch_click"
+                         data-movie-id="{{ object.id }}"
+                         data-link-type="W">
+                        Watch
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+
+                <div class="text-muted small mt-2">
+                  If nothing appears above, no watch links are saved for this movie.
+                </div>
+              {% else %}
+                <div class="text-muted">No watch links available.</div>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Poster + Info -->
+    <div class="col-lg-5">
+      <div class="card detail-card p-3 h-100">
+        <div class="detail-poster-wrap">
+          <img
+            src="{{ object.image.url }}"
+            alt="{{ object.title }}"
+            class="detail-poster"
+            loading="lazy"
+            onerror="this.src='{% static 'img/placeholder.png' %}'"
+          >
+        </div>
+
+        <div class="detail-body">
+          <h4 class="detail-title">🎞️ Movie Info</h4>
+
+          <div class="detail-label">Description</div>
+          <div class="detail-desc">
+            {{ object.description }}
+          </div>
+
+          <ul class="detail-list">
+            <li>
+              <span class="k">🎭 Genres:</span>
+              {% for genre in object.genres.all %}
+                <span class="badge bg-warning text-dark me-1">{{ genre.name }}</span>
+              {% empty %}
+                <span class="muted">N/A</span>
+              {% endfor %}
+            </li>
+
+            <li><span class="k">👥 Cast:</span> {{ object.cast|default:"N/A" }}</li>
+            <li>
+              <span class="k">⭐ Rating:</span>
+              <span class="js-avg-rating">{{ object.rating }}</span>/10
+              <span class="text-muted small">(<span class="js-rating-count">{{ object.rating_count|default:0 }}</span>)</span>
+            </li>
+            <li><span class="k">⏱ Duration:</span> {{ object.duration }} minutes</li>
+            <li><span class="k">👁 Views:</span> {{ object.views_count }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Related Movies -->
+  {% if related_movies %}
+    <div class="mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0 related-title">🎬 Related Movies</h3>
+        <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light btn-sm nav-btn">Browse all</a>
+      </div>
+
       <div class="movie-horizontal-scroll">
         <div class="scroll-wrapper d-flex gap-3">
           {% for movie in related_movies %}
-          <div class="movie-card text-center">
-            <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
-              <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
-                   onerror="this.src='{% static 'img/placeholder.png' %}'">
-              <h6 class="mt-2 text-light">{{ movie.title }}</h6>
-              <p class="text-muted small mb-1">⭐ {{ movie.rating }}/10 | ⏱ {{ movie.duration }} min</p>
-              {% for genre in movie.category|split_by_comma %}
-                <span class="badge bg-warning text-dark small">{{ genre|title }}</span>
-              {% endfor %}
-            </a>
-          </div>
+            <div class="movie-card text-center p-2" style="min-width: 180px;">
+              <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+                <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                     loading="lazy"
+                     onerror="this.src='{% static 'img/placeholder.png' %}'">
+                <h6 class="mt-2 movie-title">{{ movie.title }}</h6>
+                <p class="text-muted small mb-1 movie-meta">
+                  ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+                  • ⏱ {{ movie.duration }} min
+                </p>
+                <div class="d-flex justify-content-center flex-wrap gap-1">
+                  {% for g in movie.genres.all %}
+                    <span class="badge bg-secondary small">{{ g.name }}</span>
+                  {% empty %}
+                    <span class="badge bg-secondary small">No genres</span>
+                  {% endfor %}
+                </div>
+              </a>
+            </div>
           {% endfor %}
         </div>
       </div>
-    </section>
-    {% endif %}
+    </div>
+  {% endif %}
 
-  </div>
-</main>
+  <!-- Personalized Recommendations -->
+  {% if request.user.is_authenticated and recommended_for_you %}
+    <div class="mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0 related-title">✨ Because you liked / watched…</h3>
+        <span class="text-muted small">Personalized picks</span>
+      </div>
+
+      <div class="movie-horizontal-scroll">
+        <div class="scroll-wrapper d-flex gap-3">
+          {% for movie in recommended_for_you %}
+            <div class="movie-card text-center p-2" style="min-width: 180px;">
+              <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+                <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                     loading="lazy"
+                     onerror="this.src='{% static 'img/placeholder.png' %}'">
+                <h6 class="mt-2 movie-title">{{ movie.title }}</h6>
+                <p class="text-muted small mb-1 movie-meta">
+                  ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+                  • ⏱ {{ movie.duration }} min
+                </p>
+                <div class="d-flex justify-content-center flex-wrap gap-1">
+                  {% for g in movie.genres.all %}
+                    <span class="badge bg-secondary small">{{ g.name }}</span>
+                  {% empty %}
+                    <span class="badge bg-secondary small">No genres</span>
+                  {% endfor %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Contextual Recommendations (works for everyone) -->
+  {% if because_this %}
+    <div class="mt-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0 related-title">🎯 Because you’re viewing this</h3>
+        <span class="text-muted small">Similar vibe</span>
+      </div>
+
+      <div class="movie-horizontal-scroll">
+        <div class="scroll-wrapper d-flex gap-3">
+          {% for movie in because_this %}
+            <div class="movie-card text-center p-2" style="min-width: 180px;">
+              <a href="{% url 'movie:movie_detail' movie.slug %}" class="text-decoration-none">
+                <img src="{{ movie.image.url }}" class="movie-poster" alt="{{ movie.title }}"
+                     loading="lazy"
+                     onerror="this.src='{% static 'img/placeholder.png' %}'">
+                <h6 class="mt-2 movie-title">{{ movie.title }}</h6>
+                <p class="text-muted small mb-1 movie-meta">
+                  ⭐ {{ movie.rating }}/10 <span class="text-muted small">({{ movie.rating_count|default:0 }})</span>
+                  • ⏱ {{ movie.duration }} min
+                </p>
+                <div class="d-flex justify-content-center flex-wrap gap-1">
+                  {% for g in movie.genres.all %}
+                    <span class="badge bg-secondary small">{{ g.name }}</span>
+                  {% empty %}
+                    <span class="badge bg-secondary small">No genres</span>
+                  {% endfor %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    function postBeacon(url, data) {
+      try {
+        const form = new URLSearchParams(data);
+        const blob = new Blob([form.toString()], { type: 'application/x-www-form-urlencoded' });
+        navigator.sendBeacon(url, blob);
+      } catch (e) {
+        fetch(url, {
+          method: "POST",
+          headers: {"Content-Type":"application/x-www-form-urlencoded"},
+          body: new URLSearchParams(data).toString(),
+          keepalive: true
+        });
+      }
+    }
+
+    // ✅ Link click tracking (download/watch)
+    document.addEventListener("click", function (e) {
+      const a = e.target.closest(".js-track-link");
+      if (!a) return;
+
+      const endpoint = "{% url 'movie:track_event_api' %}";
+      postBeacon(endpoint, {
+        event_type: a.dataset.event || "",
+        movie_id: a.dataset.movieId || "",
+        link_type: a.dataset.linkType || "",
+        url: a.href || ""
+      });
+    }, true);
+
+    // ✅ Rating AJAX enhancer
+    const ratingForm = document.querySelector(".js-rating-form");
+    if (ratingForm) {
+      ratingForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const status = ratingForm.querySelector(".js-rating-status");
+        if (status) status.textContent = "Saving...";
+
+        const fd = new FormData(ratingForm);
+
+        try {
+          const res = await fetch(ratingForm.action, {
+            method: "POST",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            body: fd,
+          });
+
+          const data = await res.json();
+          if (!res.ok || !data || !data.ok) {
+            if (status) status.textContent = "Invalid rating.";
+            return;
+          }
+
+          document.querySelectorAll(".js-avg-rating").forEach(el => { el.textContent = data.avg_rating; });
+          document.querySelectorAll(".js-rating-count").forEach(el => { el.textContent = data.rating_count; });
+
+          const myWrap = document.querySelector(".js-my-rating");
+          if (myWrap) {
+            myWrap.innerHTML = `You rated: ⭐ <span class="js-my-rating-value">${data.your_rating}</span>/10`;
+          }
+
+          if (status) status.textContent = data.created ? "Saved ✅" : "Updated ✅";
+        } catch (err) {
+          if (status) status.textContent = "Error. Try again.";
+        }
+      });
+    }
+
+    // ✅ NEW: Comment AJAX enhancer
+    const commentForm = document.querySelector(".js-comment-form");
+    if (commentForm) {
+      const statusEl = commentForm.querySelector(".js-comment-status");
+      const list = document.querySelector(".js-comment-list");
+
+      commentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (statusEl) statusEl.textContent = "Posting...";
+
+        const fd = new FormData(commentForm);
+
+        try {
+          const res = await fetch(commentForm.action, {
+            method: "POST",
+            headers: {"X-Requested-With": "XMLHttpRequest"},
+            body: fd
+          });
+
+          const data = await res.json();
+          if (!res.ok || !data || !data.ok) {
+            if (statusEl) statusEl.textContent = "Please write a valid comment.";
+            return;
+          }
+
+          if (statusEl) statusEl.textContent = "Posted ✅";
+
+          const textarea = commentForm.querySelector("textarea");
+          if (textarea) textarea.value = "";
+
+          if (list) {
+            const div = document.createElement("div");
+            div.className = "p-3 rounded";
+            div.style.background = "rgba(255,255,255,0.04)";
+            div.style.border = "1px solid rgba(255,255,255,0.08)";
+            div.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="fw-bold">${data.user || "You"}</div>
+                <div class="text-muted small">Just now</div>
+              </div>
+              <div class="mt-2 text-light" style="white-space: pre-wrap;"></div>
+            `;
+            div.querySelector("div.mt-2").textContent = data.body;
+            list.prepend(div);
+          }
+        } catch (err) {
+          if (statusEl) statusEl.textContent = "Error. Try again.";
+        }
+      });
+    }
+  })();
+</script>
 {% endblock %}
