@@ -91,11 +91,11 @@ The `build_daily_metrics` management command is the core pipeline job. It aggreg
 
 | Layer | Technology | Notes |
 |---|---|---|
-| Backend | Python 3, Django 4 | ORM used for all queries; no raw SQL required by the framework but used selectively for aggregations |
-| Database | SQLite (dev) / PostgreSQL (prod) | Schema designed for easy swap via `DATABASE_URL` |
+| Backend | Python 3, Django 5 | ORM used for all queries; `Count`, `Sum`, `annotate`, `TruncDate` used across KPI and trend queries |
+| Database | SQLite | Development database; swap to PostgreSQL for production by updating `DATABASES` in `settings.py` |
 | Pipeline | Django management command | `build_daily_metrics` — daily grain, upsert pattern, ETL run logging |
 | Aggregation | Django ORM + `annotate` / `values` | `Count`, `Avg`, `F`, `Case/When` used across KPI and ranking queries |
-| Ranking | Wilson score lower bound | Confidence-weighted rating to avoid bias toward low-volume titles |
+| Ranking | Composite sort | Top-rated ordered by `-rating`, `-rating_count`, `-views_count` — higher review volume breaks ties, avoiding bias toward single-review outliers |
 | Exports | Python `csv` module + `StreamingHttpResponse` | Memory-safe for large result sets |
 | Frontend | Bootstrap 5, vanilla JS fetch (AJAX) | Rating updates without page reload |
 
