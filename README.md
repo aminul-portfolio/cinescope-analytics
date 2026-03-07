@@ -18,13 +18,13 @@ CineScope is a full-stack Django project that goes beyond a standard CRUD app. I
 
 | Home | Movie Detail |
 |------|-------------|
-| ![Home](src/images/cinescope_homepage_combined.png) | ![Movie Detail](src/images/movie_detail.png) |
+| ![Home](images/cinescope_homepage_combined.png) | ![Movie Detail](images/movie_detail.png) |
 
 | Analytics Dashboard | About |
 |---------------------|-------|
-| ![Dashboard](src/images/dashboard.png) | ![About](src/images/about.PNG) |
+| ![Dashboard](images/dashboard.png) | ![About](images/about.PNG) |
 
-> Full walkthrough: `src/images/cinescope_analytics_combined_full.png`
+> Full walkthrough: `images/cinescope_analytics_combined_full.png`
 
 ---
 
