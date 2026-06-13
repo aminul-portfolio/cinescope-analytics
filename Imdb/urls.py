@@ -32,7 +32,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# Portfolio/coursework Render deployment: serve committed /media/ files from disk.
+# Temporary coursework/portfolio Render deployment: serve committed /media/ files from disk.
 # django.conf.urls.static.static() adds no routes when DEBUG=False, so use serve() directly.
 # Not a long-term production media strategy — use object storage/CDN in production.
 urlpatterns += [
