@@ -140,3 +140,34 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'doteboysumon@gmail.com'
 EMAIL_HOST_PASSWORD = 'twbxufhfmnvdroid'  # ← your App Password
 DEFAULT_FROM_EMAIL = 'noreply@imdbclone.com'
+
+# ── PRODUCTION SETTINGS (Render) ─────────────────────────────
+import dj_database_url as _dj
+
+if os.environ.get('RENDER'):
+    DEBUG = False
+    SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
+    ALLOWED_HOSTS = ['*']
+
+    # Database
+    DATABASES = {
+        'default': _dj.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+
+    # WhiteNoise static files
+    if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
+        idx = next(
+            (i for i, m in enumerate(MIDDLEWARE)
+             if 'SecurityMiddleware' in m), 0
+        )
+        MIDDLEWARE.insert(idx + 1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+    STATICFILES_STORAGE = (
+        'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    )
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# ── END PRODUCTION SETTINGS ───────────────────────────────────

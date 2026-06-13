@@ -420,6 +420,7 @@ textarea.form-control::placeholder{
 .movie-horizontal-scroll{
   position:relative;
   margin:16px 0 24px;
+  overflow:visible;
 }
 .scroll-wrapper{
   display:flex;
@@ -441,29 +442,7 @@ textarea.form-control::placeholder{
   border-radius:14px;
 }
 
-/* Scroll buttons */
-.scroll-btn{
-  position:absolute;
-  top:40%;
-  transform:translateY(-50%);
-  width:42px;
-  height:42px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.18);
-  color:rgba(255,255,255,0.92);
-  backdrop-filter:blur(10px);
-  box-shadow:var(--shadow-soft);
-  display:grid;
-  place-items:center;
-  z-index:5;
-}
-.scroll-btn.left{ left:-10px; }
-.scroll-btn.right{ right:-10px; }
-.scroll-btn:hover{
-  background:rgba(255,255,255,0.14);
-  transform:translateY(-50%) scale(1.03);
-}
+/* Scroll buttons — see DEFINITIVE CAROUSEL BUTTON STYLES at bottom of file */
 
 /* ---------- Footer ---------- */
 .footer-saas{
@@ -821,3 +800,619 @@ textarea.form-control::placeholder{
 @media (min-width:992px){
   .detail-card{ position:sticky; top:92px; }
 }
+
+/* ── CineScope Social Media Footer Links ─────────────────── */
+.cinescope-social-link {
+  display: inline-flex;
+  align-items: center;
+  color: #9BC4E2;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.cinescope-social-link:hover {
+  color: #C8920A;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.cinescope-social-link i {
+  font-size: 1.1rem;
+}
+
+.cinescope-social-bar {
+  border-top-color: rgba(155, 196, 226, 0.15) !important;
+}
+
+@media (max-width: 767px) {
+  .cinescope-social-link span {
+    display: none;
+  }
+  .cinescope-social-link i {
+    font-size: 1.4rem;
+  }
+  .cinescope-social-bar .d-flex {
+    gap: 1rem !important;
+  }
+}
+
+/* ── CineScope Responsive Utilities ─────────────────────── */
+
+/* Ensure all images are responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (max-width: 768px) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Readable font sizes on small screens */
+  body {
+    font-size: 15px;
+  }
+
+  /* Ensure tables scroll horizontally on mobile */
+  .table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Stack footer content on mobile */
+  footer .row > div {
+    margin-bottom: 1rem;
+  }
+
+  /* Full-width buttons on mobile for key CTAs */
+  .btn-cta-mobile {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Tablet-specific adjustments */
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  /* Two-column layout for filter controls on tablet */
+  .filter-group {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   CINESCOPE PREMIUM NAVBAR
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Base navbar ─────────────────────────────────────────── */
+.cs-navbar {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 15, 28, 0.97) 0%,
+    rgba(18, 25, 45, 0.97) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(155, 196, 226, 0.12);
+  padding: 0;
+  height: 64px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4),
+              0 1px 0 rgba(155, 196, 226, 0.08);
+  z-index: 1050;
+  transition: all 0.3s ease;
+}
+
+.cs-navbar-spacer {
+  height: 64px;
+}
+
+/* ── Brand / Logo ─────────────────────────────────────────── */
+.cs-brand {
+  text-decoration: none;
+  padding: 0;
+}
+
+.cs-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(200, 146, 10, 0.4));
+  transition: filter 0.3s ease;
+}
+
+.cs-brand:hover .cs-logo-img {
+  filter: drop-shadow(0 0 12px rgba(200, 146, 10, 0.7));
+}
+
+.cs-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.cs-brand-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #E8F0F8;
+  letter-spacing: 0.02em;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.cs-brand-tag {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #C8920A;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 1px;
+}
+
+/* ── Nav links ────────────────────────────────────────────── */
+.cs-nav-link {
+  color: #A8BCCF !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.45rem 0.75rem !important;
+  border-radius: 8px;
+  transition: color 0.2s ease, background 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.cs-nav-link:hover {
+  color: #E8F0F8 !important;
+  background: rgba(155, 196, 226, 0.08);
+}
+
+.cs-nav-link.active,
+.cs-nav-link[aria-current="page"] {
+  color: #C8920A !important;
+  background: rgba(200, 146, 10, 0.08);
+}
+
+.cs-nav-link i {
+  opacity: 0.75;
+  font-size: 0.85rem;
+}
+
+/* ── Dropdown ─────────────────────────────────────────────── */
+.cs-dropdown {
+  background: #0E1628;
+  border: 1px solid rgba(155, 196, 226, 0.15);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(155, 196, 226, 0.06);
+  margin-top: 8px !important;
+}
+
+.cs-dropdown-item {
+  color: #A8BCCF;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  transition: all 0.15s ease;
+}
+
+.cs-dropdown-item:hover {
+  color: #E8F0F8;
+  background: rgba(155, 196, 226, 0.08);
+}
+
+/* ── Search ───────────────────────────────────────────────── */
+.cs-search-form {
+  flex: 1;
+  max-width: 380px;
+}
+
+.cs-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.cs-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5A7080;
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cs-search-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(155, 196, 226, 0.15);
+  border-radius: 10px;
+  color: #E8F0F8;
+  padding: 0.45rem 0.75rem 0.45rem 2.25rem;
+  font-size: 0.85rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.cs-search-input::placeholder {
+  color: #4A6070;
+}
+
+.cs-search-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(200, 146, 10, 0.5);
+  box-shadow: 0 0 0 3px rgba(200, 146, 10, 0.12);
+  color: #E8F0F8;
+  outline: none;
+}
+
+/* ── Analytics button (amber primary) ────────────────────── */
+.cs-btn-analytics {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  background: linear-gradient(135deg, #C8920A 0%, #E8AA12 100%);
+  color: #0A0F1A !important;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(200, 146, 10, 0.35);
+}
+
+.cs-btn-analytics:hover {
+  background: linear-gradient(135deg, #E8AA12 0%, #F5C030 100%);
+  color: #0A0F1A !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(200, 146, 10, 0.5);
+}
+
+/* ── Dashboard button (outline style) ────────────────────── */
+.cs-btn-dashboard {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  color: #9BC4E2 !important;
+  border: 1px solid rgba(155, 196, 226, 0.3);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cs-btn-dashboard:hover {
+  background: rgba(155, 196, 226, 0.08);
+  color: #E8F0F8 !important;
+  border-color: rgba(155, 196, 226, 0.5);
+}
+
+/* ── Login button ─────────────────────────────────────────── */
+.cs-btn-login {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  color: #C8920A !important;
+  border: 1px solid rgba(200, 146, 10, 0.4);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cs-btn-login:hover {
+  background: rgba(200, 146, 10, 0.1);
+  border-color: rgba(200, 146, 10, 0.7);
+}
+
+/* ── User menu ────────────────────────────────────────────── */
+.cs-user-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 10px;
+  color: #A8BCCF;
+  text-decoration: none;
+  border: 1px solid rgba(155, 196, 226, 0.12);
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.cs-user-menu:hover {
+  color: #E8F0F8;
+  background: rgba(155, 196, 226, 0.06);
+  border-color: rgba(155, 196, 226, 0.25);
+}
+
+.cs-user-avatar {
+  font-size: 1.2rem;
+  color: #9BC4E2;
+  line-height: 1;
+}
+
+.cs-username {
+  font-weight: 500;
+  font-size: 0.82rem;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Mobile hamburger custom ──────────────────────────────── */
+.cs-toggler {
+  border: 1px solid rgba(155, 196, 226, 0.2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: transparent;
+}
+
+.cs-toggler:focus {
+  box-shadow: 0 0 0 3px rgba(200, 146, 10, 0.2);
+}
+
+.cs-toggler-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 20px;
+}
+
+.cs-toggler-icon span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #9BC4E2;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ── Mobile styles ────────────────────────────────────────── */
+@media (max-width: 991px) {
+  .cs-navbar {
+    height: auto;
+    min-height: 64px;
+    padding: 0;
+  }
+
+  .cs-navbar .container-fluid {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .collapse.show,
+  .collapsing {
+    background: rgba(10, 15, 28, 0.98);
+    border-top: 1px solid rgba(155, 196, 226, 0.1);
+    padding: 12px 0 16px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .cs-nav-link {
+    padding: 0.6rem 1rem !important;
+    border-radius: 8px;
+    margin: 2px 0;
+  }
+
+  .cs-search-form {
+    max-width: 100%;
+    margin: 8px 0 !important;
+  }
+
+  .cs-btn-analytics,
+  .cs-btn-dashboard,
+  .cs-btn-login {
+    width: 100%;
+    justify-content: center;
+    margin: 4px 0;
+    padding: 0.6rem 1rem;
+  }
+
+  .cs-user-menu {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cs-navbar-spacer {
+    height: 64px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   END CINESCOPE PREMIUM NAVBAR
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Navbar Search Button ─────────────────────────────────── */
+.cs-search-inner {
+  flex: 1;
+  min-width: 0;
+}
+
+.cs-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #C8920A 0%, #E8AA12 100%);
+  color: #0A0F1A;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(200, 146, 10, 0.3);
+}
+
+.cs-search-btn:hover {
+  background: linear-gradient(135deg, #E8AA12 0%, #F5C030 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(200, 146, 10, 0.45);
+}
+
+.cs-search-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 991px) {
+  .cs-search-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   CINESCOPE DEFINITIVE CAROUSEL BUTTON STYLES
+   Applied to ALL prev/next buttons across all carousels
+   ════════════════════════════════════════════════════════════ */
+
+/* Carousel wrapper positioning */
+.cs-section-carousel,
+.cs-detail-carousel {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Poster-centred vertical anchor (header + track margin + padding + half poster) */
+:root {
+  --carousel-poster-half: 110px;
+  --carousel-btn-top: calc(48px + 16px + 8px + var(--carousel-poster-half));
+}
+
+/* Base style — all carousel navigation buttons */
+.scroll-btn {
+  position: absolute !important;
+  top: var(--carousel-btn-top) !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+  margin: 0 !important;
+
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+
+  background: rgba(10, 15, 30, 0.82) !important;
+  border: 1.5px solid rgba(155, 196, 226, 0.25) !important;
+  color: #C8D8E8 !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(155, 196, 226, 0.06) !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    opacity 0.25s ease !important;
+}
+
+.scroll-btn.left {
+  left: -20px !important;
+  right: auto !important;
+}
+
+.scroll-btn.right {
+  right: -20px !important;
+  left: auto !important;
+}
+
+.scroll-btn:hover {
+  background: rgba(200, 146, 10, 0.18) !important;
+  border-color: rgba(200, 146, 10, 0.6) !important;
+  color: #C8920A !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow:
+    0 4px 20px rgba(200, 146, 10, 0.3),
+    0 0 0 1px rgba(200, 146, 10, 0.15) !important;
+}
+
+.scroll-btn:active {
+  transform: translateY(-50%) scale(0.96) !important;
+}
+
+.scroll-btn:disabled,
+.scroll-btn.disabled {
+  opacity: 0.25 !important;
+  pointer-events: none !important;
+}
+
+/* ── Hero slider buttons: always hidden ──────────────────── */
+.hero-swiper .swiper-button-prev,
+.hero-swiper .swiper-button-next,
+.homeslider .swiper-button-prev,
+.homeslider .swiper-button-next,
+.cs-hero-control {
+  display: none !important;
+}
+
+/* ── Hero indicator dots: always visible ─────────────────── */
+.hero-swiper .swiper-pagination,
+.homeslider .swiper-pagination {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+/* ── Section carousels: hide by default, show on hover ───── */
+.cs-section-carousel .scroll-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.cs-section-carousel:hover .scroll-btn {
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+
+/* ── Movie detail carousels: show on hover only ──────────── */
+.movie-detail-page .cs-detail-carousel .scroll-btn,
+.movie-detail-page .scroll-btn.cs-detail-scroll {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease;
+}
+
+.movie-detail-page .cs-detail-carousel:hover .scroll-btn,
+.movie-detail-page .cs-detail-carousel:hover .scroll-btn.cs-detail-scroll {
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+
+/* ── Mobile: always show all carousel buttons ───────────── */
+@media (hover: none) and (pointer: coarse) {
+  .cs-section-carousel .scroll-btn {
+    opacity: 1 !important;
+    pointer-events: all !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   END DEFINITIVE CAROUSEL BUTTON STYLES
+   ════════════════════════════════════════════════════════════ */

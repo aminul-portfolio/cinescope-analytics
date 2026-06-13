@@ -54,6 +54,169 @@
     </div>
   </div>
 
+  <!-- Poster + Info -->
+  <div class="row g-4">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
+      <div class="card detail-card p-3 h-100">
+        <div class="detail-poster-wrap">
+          <img
+            src="{{ object.image.url }}"
+            alt="{{ object.title }}"
+            class="detail-poster img-fluid rounded"
+            loading="lazy"
+            onerror="this.src='{% static 'img/placeholder.png' %}'"
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-8">
+      <div class="card detail-card p-3 h-100">
+        <div class="detail-body">
+          <h4 class="detail-title">🎞️ Movie Info</h4>
+
+          <div class="detail-label">Description</div>
+          <div class="detail-desc">
+            {{ object.description }}
+          </div>
+
+          <ul class="detail-list">
+            <li>
+              <span class="k">🎭 Genres:</span>
+              {% for genre in object.genres.all %}
+                <span class="badge bg-warning text-dark me-1">{{ genre.name }}</span>
+              {% empty %}
+                <span class="muted">N/A</span>
+              {% endfor %}
+            </li>
+
+            <li><span class="k">👥 Cast:</span> {{ object.cast|default:"N/A" }}</li>
+            <li>
+              <span class="k">⭐ Rating:</span>
+              <span class="js-avg-rating">{{ object.rating }}</span>/10
+              <span class="text-muted small">(<span class="js-rating-count">{{ object.rating_count|default:0 }}</span>)</span>
+            </li>
+            <li><span class="k">⏱ Duration:</span> {{ object.duration }} minutes</li>
+            <li><span class="k">👁 Views:</span> {{ object.views_count }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trailer -->
+  <div class="card p-3 mb-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0 section-h4">🎬 Trailer</h4>
+      {% if object.trailer_url %}
+        <span class="badge bg-success">Available</span>
+      {% else %}
+        <span class="badge bg-secondary">Not available</span>
+      {% endif %}
+    </div>
+
+    {% if object.trailer_url %}
+      <div class="ratio ratio-16x9 rounded overflow-hidden trailer-frame">
+        <iframe
+          src="{{ object.trailer_url }}"
+          title="{{ object.title }} Trailer"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+      <div class="text-muted small mt-2">
+        Tip: Use an embeddable URL (YouTube “embed” link works best).
+      </div>
+    {% else %}
+      <div class="empty-state text-center">
+        <div class="empty-title">Trailer not added yet</div>
+        <div class="text-muted small mt-1">
+          Add an embeddable trailer URL in the admin panel to show it here.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Watch & Download -->
+  <div class="card p-3 mb-4">
+    <h4 class="mb-3 text-center section-h4">🔗 Watch & Download</h4>
+
+    <div class="row g-3">
+
+      <!-- Download -->
+      <div class="col-md-6">
+        <div class="link-panel">
+          <h5 class="mb-3 link-title">📥 Download Links</h5>
+
+          {% if links %}
+            {% for link in links %}
+              {% if link.type == "D" %}
+                <div class="link-item">
+                  <div>
+                    <div class="link-item-title">Download</div>
+                    <div class="text-muted small">External link</div>
+                  </div>
+
+                  <a href="{{ link.link }}"
+                     target="_blank"
+                     rel="noopener"
+                     class="btn btn-warning btn-sm nav-cta js-track-link"
+                     data-event="download_click"
+                     data-movie-id="{{ object.id }}"
+                     data-link-type="D">
+                    Download
+                  </a>
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            <div class="text-muted small mt-2">
+              If nothing appears above, no download links are saved for this movie.
+            </div>
+          {% else %}
+            <div class="text-muted">No download links available.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Watch -->
+      <div class="col-md-6">
+        <div class="link-panel">
+          <h5 class="mb-3 link-title">▶️ Watch Links</h5>
+
+          {% if links %}
+            {% for link in links %}
+              {% if link.type == "W" %}
+                <div class="link-item">
+                  <div>
+                    <div class="link-item-title">Watch</div>
+                    <div class="text-muted small">External stream</div>
+                  </div>
+
+                  <a href="{{ link.link }}"
+                     target="_blank"
+                     rel="noopener"
+                     class="btn btn-success btn-sm js-track-link"
+                     data-event="watch_click"
+                     data-movie-id="{{ object.id }}"
+                     data-link-type="W">
+                    Watch
+                  </a>
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            <div class="text-muted small mt-2">
+              If nothing appears above, no watch links are saved for this movie.
+            </div>
+          {% else %}
+            <div class="text-muted">No watch links available.</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ✅ Rating block -->
   {% if request.user.is_authenticated %}
     <div class="card p-3 mt-3"
@@ -167,181 +330,18 @@
     </div>
   </div>
 
-  <div class="row g-4 mt-2">
-
-    <!-- Left: Trailer + Links -->
-    <div class="col-lg-7">
-
-      <!-- Trailer -->
-      <div class="card p-3 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4 class="mb-0 section-h4">🎬 Trailer</h4>
-          {% if object.trailer_url %}
-            <span class="badge bg-success">Available</span>
-          {% else %}
-            <span class="badge bg-secondary">Not available</span>
-          {% endif %}
-        </div>
-
-        {% if object.trailer_url %}
-          <div class="ratio ratio-16x9 rounded overflow-hidden trailer-frame">
-            <iframe
-              src="{{ object.trailer_url }}"
-              title="{{ object.title }} Trailer"
-              allowfullscreen
-              loading="lazy"></iframe>
-          </div>
-          <div class="text-muted small mt-2">
-            Tip: Use an embeddable URL (YouTube “embed” link works best).
-          </div>
-        {% else %}
-          <div class="empty-state text-center">
-            <div class="empty-title">Trailer not added yet</div>
-            <div class="text-muted small mt-1">
-              Add an embeddable trailer URL in the admin panel to show it here.
-            </div>
-          </div>
-        {% endif %}
-      </div>
-
-      <!-- Watch & Download -->
-      <div class="card p-3">
-        <h4 class="mb-3 text-center section-h4">🔗 Watch & Download</h4>
-
-        <div class="row g-3">
-
-          <!-- Download -->
-          <div class="col-md-6">
-            <div class="link-panel">
-              <h5 class="mb-3 link-title">📥 Download Links</h5>
-
-              {% if links %}
-                {% for link in links %}
-                  {% if link.type == "D" %}
-                    <div class="link-item">
-                      <div>
-                        <div class="link-item-title">Download</div>
-                        <div class="text-muted small">External link</div>
-                      </div>
-
-                      <a href="{{ link.link }}"
-                         target="_blank"
-                         rel="noopener"
-                         class="btn btn-warning btn-sm nav-cta js-track-link"
-                         data-event="download_click"
-                         data-movie-id="{{ object.id }}"
-                         data-link-type="D">
-                        Download
-                      </a>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-
-                <div class="text-muted small mt-2">
-                  If nothing appears above, no download links are saved for this movie.
-                </div>
-              {% else %}
-                <div class="text-muted">No download links available.</div>
-              {% endif %}
-            </div>
-          </div>
-
-          <!-- Watch -->
-          <div class="col-md-6">
-            <div class="link-panel">
-              <h5 class="mb-3 link-title">▶️ Watch Links</h5>
-
-              {% if links %}
-                {% for link in links %}
-                  {% if link.type == "W" %}
-                    <div class="link-item">
-                      <div>
-                        <div class="link-item-title">Watch</div>
-                        <div class="text-muted small">External stream</div>
-                      </div>
-
-                      <a href="{{ link.link }}"
-                         target="_blank"
-                         rel="noopener"
-                         class="btn btn-success btn-sm js-track-link"
-                         data-event="watch_click"
-                         data-movie-id="{{ object.id }}"
-                         data-link-type="W">
-                        Watch
-                      </a>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-
-                <div class="text-muted small mt-2">
-                  If nothing appears above, no watch links are saved for this movie.
-                </div>
-              {% else %}
-                <div class="text-muted">No watch links available.</div>
-              {% endif %}
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Right: Poster + Info -->
-    <div class="col-lg-5">
-      <div class="card detail-card p-3 h-100">
-        <div class="detail-poster-wrap">
-          <img
-            src="{{ object.image.url }}"
-            alt="{{ object.title }}"
-            class="detail-poster"
-            loading="lazy"
-            onerror="this.src='{% static 'img/placeholder.png' %}'"
-          >
-        </div>
-
-        <div class="detail-body">
-          <h4 class="detail-title">🎞️ Movie Info</h4>
-
-          <div class="detail-label">Description</div>
-          <div class="detail-desc">
-            {{ object.description }}
-          </div>
-
-          <ul class="detail-list">
-            <li>
-              <span class="k">🎭 Genres:</span>
-              {% for genre in object.genres.all %}
-                <span class="badge bg-warning text-dark me-1">{{ genre.name }}</span>
-              {% empty %}
-                <span class="muted">N/A</span>
-              {% endfor %}
-            </li>
-
-            <li><span class="k">👥 Cast:</span> {{ object.cast|default:"N/A" }}</li>
-            <li>
-              <span class="k">⭐ Rating:</span>
-              <span class="js-avg-rating">{{ object.rating }}</span>/10
-              <span class="text-muted small">(<span class="js-rating-count">{{ object.rating_count|default:0 }}</span>)</span>
-            </li>
-            <li><span class="k">⏱ Duration:</span> {{ object.duration }} minutes</li>
-            <li><span class="k">👁 Views:</span> {{ object.views_count }}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
   <!-- Related Movies -->
   {% if related_movies %}
-    <div class="mt-5">
+    <div class="mt-5 cs-detail-carousel position-relative">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0 related-title">🎬 Related Movies</h3>
         <a href="{% url 'movie:movie_list' %}" class="btn btn-outline-light btn-sm nav-btn">Browse all</a>
       </div>
 
-      <div class="movie-horizontal-scroll">
+      <button class="scroll-btn left cs-detail-scroll" data-target="#relatedScroll" aria-label="Scroll Left">‹</button>
+      <button class="scroll-btn right cs-detail-scroll" data-target="#relatedScroll" aria-label="Scroll Right">›</button>
+
+      <div id="relatedScroll" class="movie-horizontal-scroll">
         <div class="scroll-wrapper d-flex gap-3">
           {% for movie in related_movies %}
             <div class="movie-card text-center p-2" style="min-width: 180px;">
@@ -371,13 +371,16 @@
 
   <!-- Personalized Recommendations -->
   {% if request.user.is_authenticated and recommended_for_you %}
-    <div class="mt-5">
+    <div class="mt-5 cs-detail-carousel position-relative">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0 related-title">✨ Because you liked / watched…</h3>
         <span class="text-muted small">Personalized picks</span>
       </div>
 
-      <div class="movie-horizontal-scroll">
+      <button class="scroll-btn left cs-detail-scroll" data-target="#likedScroll" aria-label="Scroll Left">‹</button>
+      <button class="scroll-btn right cs-detail-scroll" data-target="#likedScroll" aria-label="Scroll Right">›</button>
+
+      <div id="likedScroll" class="movie-horizontal-scroll">
         <div class="scroll-wrapper d-flex gap-3">
           {% for movie in recommended_for_you %}
             <div class="movie-card text-center p-2" style="min-width: 180px;">
@@ -407,13 +410,16 @@
 
   <!-- Contextual Recommendations (works for everyone) -->
   {% if because_this %}
-    <div class="mt-5">
+    <div class="mt-5 cs-detail-carousel position-relative">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0 related-title">🎯 Because you’re viewing this</h3>
         <span class="text-muted small">Similar vibe</span>
       </div>
 
-      <div class="movie-horizontal-scroll">
+      <button class="scroll-btn left cs-detail-scroll" data-target="#viewingScroll" aria-label="Scroll Left">‹</button>
+      <button class="scroll-btn right cs-detail-scroll" data-target="#viewingScroll" aria-label="Scroll Right">›</button>
+
+      <div id="viewingScroll" class="movie-horizontal-scroll">
         <div class="scroll-wrapper d-flex gap-3">
           {% for movie in because_this %}
             <div class="movie-card text-center p-2" style="min-width: 180px;">
@@ -447,6 +453,28 @@
 {% block extra_js %}
 <script>
   (function () {
+    const scrollAmount = 360;
+
+    function getScrollable(el) {
+      if (!el) return null;
+      const style = window.getComputedStyle(el);
+      const canScrollX = (style.overflowX === "auto" || style.overflowX === "scroll");
+      if (canScrollX) return el;
+      const inner = el.querySelector(".scroll-wrapper");
+      return inner || el;
+    }
+
+    document.querySelectorAll(".movie-detail-page .scroll-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const targetId = button.getAttribute("data-target");
+        const host = document.querySelector(targetId);
+        const scrollEl = getScrollable(host);
+        if (!scrollEl) return;
+        const direction = button.classList.contains("right") ? 1 : -1;
+        scrollEl.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+      });
+    });
+
     function postBeacon(url, data) {
       try {
         const form = new URLSearchParams(data);

@@ -15,6 +15,8 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
@@ -26,43 +28,61 @@
   {# ✅ a11y: skip link #}
   <a href="#main" class="visually-hidden-focusable">Skip to content</a>
 
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-saas sticky-top">
-    <div class="container">
+  <!-- ── CineScope Premium Navbar ──────────────────────────── -->
+  <nav class="navbar navbar-expand-lg cs-navbar fixed-top">
+    <div class="container-fluid px-4">
 
-      <!-- Brand -->
-      <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
-        <img src="{% static 'images/logo.png' %}" alt="CineScope" height="32">
-        <span class="brand-text">CineScope</span>
-        <span class="brand-badge">Analytics</span>
+      <!-- BRAND — logo + name inline, compact -->
+      <a class="navbar-brand cs-brand d-flex align-items-center gap-2"
+         href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}"
+             alt="CineScope Analytics"
+             class="cs-logo-img"
+             onerror="this.style.display='none'">
+        <div class="cs-brand-text">
+          <span class="cs-brand-name">CineScope</span>
+          <span class="cs-brand-tag">Analytics</span>
+        </div>
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <!-- HAMBURGER TOGGLE (mobile) -->
+      <button class="navbar-toggler cs-toggler ms-auto me-2"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#csNavbar"
+              aria-controls="csNavbar"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="cs-toggler-icon">
+          <span></span><span></span><span></span>
+        </span>
       </button>
 
-      <div class="collapse navbar-collapse" id="mainNavbar">
+      <!-- COLLAPSIBLE NAV CONTENT -->
+      <div class="collapse navbar-collapse" id="csNavbar">
 
         {# ✅ Robust active highlighting using resolver_match #}
         {% with url_name=request.resolver_match.url_name %}
-        <ul class="navbar-nav ms-lg-3 me-auto mb-2 mb-lg-0 align-items-lg-center">
-
+        <!-- PRIMARY NAV LINKS — left of search -->
+        <ul class="navbar-nav me-auto align-items-lg-center gap-lg-1">
           <li class="nav-item">
-            <a class="nav-link {% if url_name in 'movie_list movie_year movie_category movie_language' %}active{% endif %}"
-               href="{% url 'movie:movie_list' %}">Movies</a>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-               aria-expanded="false">
-              Genres
+            <a class="nav-link cs-nav-link {% if url_name in 'movie_list movie_year movie_category movie_language' %}active{% endif %}"
+               href="{% url 'movie:movie_list' %}">
+              <i class="bi bi-play-circle me-1"></i>Movies
             </a>
-
-            <ul class="dropdown-menu dropdown-menu-dark dropdown-saas">
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link cs-nav-link dropdown-toggle"
+               href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-grid-3x3-gap me-1"></i>Genres
+            </a>
+            <ul class="dropdown-menu cs-dropdown dropdown-menu-dark">
               {% if genres %}
                 {% for g in genres %}
                   <li>
-                    <a class="dropdown-item" href="{% url 'movie:movie_list' %}?genre={{ g.name|urlencode }}">
+                    <a class="dropdown-item cs-dropdown-item"
+                       href="{% url 'movie:movie_list' %}?genre={{ g.name|urlencode }}">
                       {{ g.name }}
                     </a>
                   </li>
@@ -72,41 +92,95 @@
               {% endif %}
             </ul>
           </li>
-
           <li class="nav-item">
-            <a class="nav-link {% if url_name == 'about' %}active{% endif %}" href="{% url 'movie:about' %}">About</a>
+            <a class="nav-link cs-nav-link {% if url_name == 'about' %}active{% endif %}"
+               href="{% url 'movie:about' %}">
+              <i class="bi bi-info-circle me-1"></i>About
+            </a>
           </li>
         </ul>
         {% endwith %}
 
-        <!-- ✅ Search -->
-        <form class="d-flex nav-search-wrap me-lg-3" method="GET" action="{% url 'movie:movie_search' %}">
-          <input class="form-control nav-search" type="search" name="query" placeholder="Search movies..."
-                 aria-label="Search" value="{{ request.GET.query|default:'' }}">
-          <button class="btn nav-search-btn" type="submit">Search</button>
+        <!-- SEARCH BAR — centred -->
+        <form class="cs-search-form d-flex align-items-center mx-lg-3 my-2 my-lg-0"
+              method="GET" action="{% url 'movie:movie_search' %}">
+          <div class="cs-search-wrapper d-flex align-items-center">
+            <div class="cs-search-inner position-relative">
+              <i class="bi bi-search cs-search-icon"></i>
+              <input class="form-control cs-search-input"
+                     type="search"
+                     name="query"
+                     placeholder="Search movies, cast, genres..."
+                     aria-label="Search movies"
+                     value="{{ request.GET.query|default:'' }}">
+            </div>
+            <button type="submit" class="cs-search-btn ms-2" aria-label="Search">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
         </form>
 
-        <div class="d-flex gap-2 align-items-center">
+        <!-- RIGHT UTILITY AREA -->
+        <ul class="navbar-nav align-items-lg-center gap-lg-2 ms-lg-2">
+
           {% if user.is_authenticated %}
 
             {% if user.is_staff %}
-              <a href="{% url 'movie:analytics_dashboard' %}" class="btn btn-warning btn-sm nav-cta">
-                Analytics
+            <li class="nav-item">
+              <a class="cs-btn-analytics" href="{% url 'movie:analytics_dashboard' %}">
+                <i class="bi bi-bar-chart-line-fill me-1"></i>Analytics
               </a>
+            </li>
             {% endif %}
 
-            <a href="{% url 'movie:dashboard' %}" class="btn btn-outline-light btn-sm nav-btn">Dashboard</a>
-            <span class="nav-user d-none d-lg-inline">Hi, <strong>{{ user.username }}</strong></span>
-            <a href="{% url 'movie:logout' %}" class="btn btn-outline-light btn-sm nav-btn">Logout</a>
-          {% else %}
-            <a href="{% url 'movie:login' %}" class="btn btn-outline-light btn-sm nav-btn">Login</a>
-            <a href="{% url 'movie:signup' %}" class="btn btn-warning btn-sm nav-cta">Signup</a>
-          {% endif %}
-        </div>
+            <li class="nav-item">
+              <a class="cs-btn-dashboard" href="{% url 'movie:dashboard' %}">
+                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+              </a>
+            </li>
 
-      </div>
-    </div>
+            <li class="nav-item dropdown">
+              <a class="cs-user-menu dropdown-toggle"
+                 href="#" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="cs-user-avatar">
+                  <i class="bi bi-person-circle"></i>
+                </span>
+                <span class="cs-username d-none d-xl-inline">
+                  {{ user.username }}
+                </span>
+              </a>
+              <ul class="dropdown-menu cs-dropdown dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item cs-dropdown-item"
+                     href="{% url 'movie:logout' %}">
+                    <i class="bi bi-box-arrow-right me-2"></i>Sign out
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+          {% else %}
+
+            <li class="nav-item">
+              <a class="cs-btn-login" href="{% url 'movie:login' %}">
+                <i class="bi bi-person me-1"></i>Sign in
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="cs-btn-analytics" href="{% url 'movie:signup' %}">
+                <i class="bi bi-person-plus me-1"></i>Sign up
+              </a>
+            </li>
+
+          {% endif %}
+
+        </ul>
+      </div><!-- /collapse -->
+    </div><!-- /container -->
   </nav>
+  <!-- ── END CineScope Premium Navbar ────────────────────────── -->
+  <div class="cs-navbar-spacer"></div>
 
   <main id="main" class="main-wrap">
     {% block content %}{% endblock %}
@@ -120,6 +194,46 @@
         </div>
         <div class="text-muted small">
           Built with Django • Search • Filters • Ratings • Comments • Analytics
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Links — Stream Smarter Campaign -->
+    <div class="cinescope-social-bar py-3 border-top border-secondary mt-3">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-4 mb-2 mb-md-0">
+            <span class="text-secondary small">Follow the Stream Smarter campaign</span>
+          </div>
+          <div class="col-12 col-md-8">
+            <div class="d-flex flex-wrap gap-3 justify-content-md-end justify-content-start">
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"
+                 class="cinescope-social-link" aria-label="Instagram">
+                <i class="bi bi-instagram"></i>
+                <span class="ms-1 small">Instagram</span>
+              </a>
+              <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer"
+                 class="cinescope-social-link" aria-label="TikTok">
+                <i class="bi bi-tiktok"></i>
+                <span class="ms-1 small">TikTok</span>
+              </a>
+              <a href="https://www.x.com" target="_blank" rel="noopener noreferrer"
+                 class="cinescope-social-link" aria-label="X / Twitter">
+                <i class="bi bi-twitter-x"></i>
+                <span class="ms-1 small">X</span>
+              </a>
+              <a href="https://letterboxd.com" target="_blank" rel="noopener noreferrer"
+                 class="cinescope-social-link" aria-label="Letterboxd">
+                <i class="bi bi-film"></i>
+                <span class="ms-1 small">Letterboxd</span>
+              </a>
+              <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer"
+                 class="cinescope-social-link" aria-label="YouTube">
+                <i class="bi bi-youtube"></i>
+                <span class="ms-1 small">YouTube</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

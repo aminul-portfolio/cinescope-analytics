@@ -72,8 +72,8 @@
 
       </div>
 
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev cs-hero-control"></div>
+      <div class="swiper-button-next cs-hero-control"></div>
       <div class="swiper-pagination"></div>
     </div>
   </section>
@@ -103,7 +103,7 @@
 
   {# Recently Added #}
   {% if recently_added %}
-  <section class="panel mb-5 position-relative">
+  <section class="panel cs-section-carousel mb-5 position-relative">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="section-title mb-0">Recently Added</h2>
       <a href="{% url 'movie:movie_list' %}?status=RA" class="btn btn-sm btn-outline-light nav-btn">View all</a>
@@ -147,7 +147,7 @@
 
   {# Top Rated #}
   {% if top_rated %}
-  <section class="panel mb-5 position-relative">
+  <section class="panel cs-section-carousel mb-5 position-relative">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="section-title mb-0">Top Rated</h2>
       <a href="{% url 'movie:movie_list' %}?status=TR" class="btn btn-sm btn-outline-light nav-btn">View all</a>
@@ -191,7 +191,7 @@
 
   {# Most Watched #}
   {% if most_watched %}
-  <section class="panel mb-5 position-relative">
+  <section class="panel cs-section-carousel mb-5 position-relative">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="section-title mb-0">Most Watched</h2>
       <a href="{% url 'movie:movie_list' %}?status=MW" class="btn btn-sm btn-outline-light nav-btn">View all</a>

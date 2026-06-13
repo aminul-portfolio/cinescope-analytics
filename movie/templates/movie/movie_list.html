@@ -28,14 +28,14 @@
     <!-- Top row: search + selects -->
     <div class="row g-2 align-items-end">
 
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Search</label>
         <input class="form-control" type="search" name="query"
                placeholder="Search title, cast, description, genre..."
                value="{{ request.GET.query|default:'' }}">
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Category</label>
         <select class="form-select" name="category">
           <option value="">All</option>
@@ -46,7 +46,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Year</label>
         <select class="form-select" name="year">
           <option value="">All</option>
@@ -58,7 +58,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Genre</label>
         <select class="form-select" name="genre">
           <option value="">All</option>
@@ -70,7 +70,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Max duration</label>
         <select class="form-select" name="duration_max">
           <option value="">Any</option>
@@ -80,7 +80,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Availability</label>
         <select class="form-select" name="watch_only">
           <option value="" {% if not selected_watch_only %}selected{% endif %}>All</option>
@@ -88,7 +88,7 @@
         </select>
       </div>
 
-      <div class="col-12 col-md-4 col-lg-2">
+      <div class="col-12 col-sm-6 col-md-3 mb-2">
         <label class="form-label text-muted small mb-1">Sort</label>
         <select class="form-select" name="sort">
           <option value="" {% if not selected_sort %}selected{% endif %}>Smart (default)</option>
@@ -98,9 +98,13 @@
         </select>
       </div>
 
-      <div class="col-12 d-flex gap-2 flex-wrap mt-2">
+      <div class="col-12 col-sm-auto mb-2">
         <button class="btn btn-warning nav-cta" type="submit">Apply filters</button>
+      </div>
+      <div class="col-12 col-sm-auto mb-2">
         <a class="btn btn-outline-light nav-btn" href="{% url 'movie:movie_list' %}">Clear filters</a>
+      </div>
+      <div class="col-12 col-sm-auto mb-2">
         <a class="btn btn-outline-light nav-btn"
            href="{% url 'movie:movie_search' %}{% if request.GET.query %}?query={{ request.GET.query|urlencode }}{% endif %}">
           Advanced search page
@@ -202,8 +206,9 @@
 
   <!-- Results grid -->
   {% if object_list %}
-    <div class="catalog-grid">
+    <div class="row">
       {% for movie in object_list %}
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-4">
         <div class="catalog-card">
           <a href="{% url 'movie:movie_detail' movie.slug %}" class="catalog-link">
 
@@ -247,6 +252,7 @@
             </div>
 
           </a>
+        </div>
         </div>
       {% endfor %}
     </div>

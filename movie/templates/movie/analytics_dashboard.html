@@ -45,7 +45,7 @@
 
   <!-- KPI Cards -->
   <div class="row g-3 mb-4">
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-md-3">
       <div class="card p-3">
         <div class="text-muted small">Total Views</div>
         <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_views }}</div>
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-md-3">
       <div class="card p-3">
         <div class="text-muted small">Watches ({{ days }}d)</div>
         <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_watches_range }}</div>
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-md-3">
       <div class="card p-3">
         <div class="text-muted small">Favorites ({{ days }}d)</div>
         <div style="font-size:1.8rem; font-weight:900;">{{ kpi_total_favorites_range }}</div>
@@ -69,7 +69,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-md-3">
       <div class="card p-3">
         <div class="text-muted small">Active Users (7d / {{ days }}d)</div>
         <div style="font-size:1.8rem; font-weight:900;">
@@ -81,7 +81,7 @@
     </div>
 
     <!-- ✅ Watch Available KPI -->
-    <div class="col-12 col-md-6 col-lg-3">
+    <div class="col-6 col-md-3">
       <div class="card p-3">
         <div class="text-muted small">Watch Available</div>
         <div style="font-size:1.8rem; font-weight:900;">{{ watch_available_count|default:0 }}</div>
@@ -101,7 +101,7 @@
     </div>
 
     <div class="row g-3">
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">Missing Poster</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ missing_poster_count }}</div>
@@ -109,7 +109,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">Missing Trailer</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ missing_trailer_count }}</div>
@@ -117,7 +117,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">No Watch Link</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ no_watch_count }}</div>
@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">Unrated Movies</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ unrated_count }}</div>
@@ -162,7 +162,7 @@
     </div>
 
     <div class="row g-3">
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">RAW Watches ({{ days }}d)</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ kpi_total_watches_range }}</div>
@@ -170,7 +170,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">ETL Watches ({{ days }}d)</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ etl_watches_sum|default:0 }}</div>
@@ -178,7 +178,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">RAW Favorites ({{ days }}d)</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ kpi_total_favorites_range }}</div>
@@ -186,7 +186,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 col-lg-3">
+      <div class="col-6 col-md-3">
         <div class="p-3 rounded" style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);">
           <div class="text-muted small">ETL Favorites ({{ days }}d)</div>
           <div style="font-weight:900; font-size:1.35rem;">{{ etl_favorites_sum|default:0 }}</div>
