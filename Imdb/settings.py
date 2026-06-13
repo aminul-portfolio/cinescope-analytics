@@ -142,32 +142,34 @@ EMAIL_HOST_PASSWORD = 'twbxufhfmnvdroid'  # ← your App Password
 DEFAULT_FROM_EMAIL = 'noreply@imdbclone.com'
 
 # ── PRODUCTION SETTINGS (Render) ─────────────────────────────
-import dj_database_url as _dj
-
-if os.environ.get('RENDER'):
+import os as _os
+if _os.environ.get('RENDER'):
     DEBUG = False
-    SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
+    SECRET_KEY = _os.environ.get('SECRET_KEY', SECRET_KEY)
     ALLOWED_HOSTS = ['*']
 
-    # Database
-    DATABASES = {
-        'default': _dj.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True,
-        )
-    }
+    _db_url = _os.environ.get('DATABASE_URL')
+    if _db_url:
+        import dj_database_url as _dj
+        DATABASES = {
+            'default': _dj.config(default=_db_url, conn_max_age=600)
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': _os.path.join(BASE_DIR, 'db.sqlite3'),
+            }
+        }
 
-    # WhiteNoise static files
     if 'whitenoise.middleware.WhiteNoiseMiddleware' not in MIDDLEWARE:
-        idx = next(
-            (i for i, m in enumerate(MIDDLEWARE)
-             if 'SecurityMiddleware' in m), 0
+        _idx = next(
+            (i for i, m in enumerate(MIDDLEWARE) if 'SecurityMiddleware' in m), 0
         )
-        MIDDLEWARE.insert(idx + 1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+        MIDDLEWARE.insert(_idx + 1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
     STATICFILES_STORAGE = (
         'whitenoise.storage.CompressedManifestStaticFilesStorage'
     )
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_ROOT = _os.path.join(BASE_DIR, 'staticfiles')
 # ── END PRODUCTION SETTINGS ───────────────────────────────────
