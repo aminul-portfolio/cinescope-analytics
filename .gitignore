@@ -36,8 +36,22 @@ ENV/
 db.sqlite3
 
 # Media / collected static
-/media/
 /staticfiles/
+
+# Ignore media uploads except committed poster assets (Render coursework deploy)
+/media/*
+!/media/movies/
+!/media/movies_banner/
+/media/movies/*
+!/media/movies/*.jpg
+!/media/movies/*.jpeg
+!/media/movies/*.png
+!/media/movies/*.webp
+/media/movies_banner/*
+!/media/movies_banner/*.jpg
+!/media/movies_banner/*.jpeg
+!/media/movies_banner/*.png
+!/media/movies_banner/*.webp
 
 # -----------------------------
 # IDEs

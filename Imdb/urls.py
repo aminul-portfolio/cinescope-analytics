@@ -26,10 +26,13 @@ urlpatterns = [
     path('movies/', include('movie.urls', namespace='movie')),  # 🎞️ App URLs
 ]
 
-# ✅ Static & Media
+# ✅ Static (dev) & Media (dev + Render coursework deploy)
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Portfolio/coursework Render deployment: serve /media/ from disk.
+# Not a long-term production media strategy — use object storage/CDN in production.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # 🚫 Custom 404 Error Page
 handler404 = 'movie.views.custom_404_view'
