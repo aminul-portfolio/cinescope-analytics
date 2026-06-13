@@ -1,0 +1,456 @@
+[
+{
+  "model": "movie.genre",
+  "pk": 1,
+  "fields": {
+    "name": "Drama"
+  }
+},
+{
+  "model": "movie.genre",
+  "pk": 2,
+  "fields": {
+    "name": "Action"
+  }
+},
+{
+  "model": "movie.genre",
+  "pk": 3,
+  "fields": {
+    "name": "Comedy"
+  }
+},
+{
+  "model": "movie.genre",
+  "pk": 4,
+  "fields": {
+    "name": "Romance"
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 2,
+  "fields": {
+    "title": "Spyderman",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/3.jpg",
+    "banner": "movies_banner/poster2_NFgdwWO.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Gary Oldman, Asa Butterfields",
+    "year_of_production": "2020-05-13",
+    "duration": 90,
+    "rating": 5.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 543,
+    "created": "2020-05-04T21:24:08Z",
+    "slug": "spyderman",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 3,
+  "fields": {
+    "title": "John Wick",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/2.jpg",
+    "banner": "movies_banner/poster2_1fLwAqm.jpg",
+    "category": "comedy",
+    "language": "english",
+    "status": "MW",
+    "cast": "sumon , moin",
+    "year_of_production": "2020-05-13",
+    "duration": 90,
+    "rating": 7.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 10459,
+    "created": "2020-05-04T21:24:08Z",
+    "slug": "john-wick",
+    "genres": [
+      3
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 4,
+  "fields": {
+    "title": "Space Between Us",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/9.jpg",
+    "banner": "movies_banner/poster2_qSIfR3U.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Gary Oldman, Asa Butterfields",
+    "year_of_production": "2025-06-04",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 146,
+    "created": "2020-05-04T21:20:08Z",
+    "slug": "space-between-us",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 5,
+  "fields": {
+    "title": "Beauty and Best",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/4.jpg",
+    "banner": "movies_banner/4.jpg",
+    "category": "romance",
+    "language": "english",
+    "status": "RA",
+    "cast": "Gary Oldman, Asa Butterfields",
+    "year_of_production": "2022-09-06",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 299,
+    "created": "2020-05-04T21:24:08Z",
+    "slug": "beauty-and-best",
+    "genres": [
+      1,
+      4
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 6,
+  "fields": {
+    "title": "Pirates and Caribbean",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/5.jpg",
+    "banner": "movies_banner/9.jpg",
+    "category": "drama",
+    "language": "english",
+    "status": "MW",
+    "cast": "sumon , moin",
+    "year_of_production": "2020-05-13",
+    "duration": 90,
+    "rating": 2.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 209,
+    "created": "2020-05-04T21:24:08Z",
+    "slug": "pirates-and-caribbean",
+    "genres": [
+      1
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 7,
+  "fields": {
+    "title": "XXX",
+    "description": "The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.The first human born on Mars travels to Earth for the first time, experiencing the wonders of the planet through fresh eyes. He embarks on an adventure with a street smart girl to discover how he came to be.",
+    "image": "movies/8.jpg",
+    "banner": "movies_banner/8.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Gary Oldman, Asa Butterfields",
+    "year_of_production": "2025-06-11",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 264,
+    "created": "2020-05-04T21:14:08Z",
+    "slug": "xxx",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 9,
+  "fields": {
+    "title": "Thor",
+    "description": "i love this movie",
+    "image": "movies/7.jpg",
+    "banner": "movies_banner/poster1_RQo0EvS.jpg",
+    "category": "comedy",
+    "language": "english",
+    "status": "MW",
+    "cast": "sumon , moin",
+    "year_of_production": "2020-05-19",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 228,
+    "created": "2020-05-04T21:00:08Z",
+    "slug": "beauty-and-the-best",
+    "genres": [
+      3
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 11,
+  "fields": {
+    "title": "300",
+    "description": "In the ancient battle of Thermopylae, King Leonidas and 300 Spartans fight against Xerxes and his massive Persian army. They face insurmountable odds when they are betrayed by a Spartan reject.",
+    "image": "movies/300.jpg",
+    "banner": "movies_banner/300.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "TR",
+    "cast": "300",
+    "year_of_production": "2025-06-01",
+    "duration": 90,
+    "rating": 5.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 336,
+    "created": "2025-06-19T23:07:17Z",
+    "slug": "300",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 12,
+  "fields": {
+    "title": "Pirates of the Caribbean",
+    "description": "Pirates of the Caribbean is an American fantasy supernatural swashbuckler film series produced by Jerry Bruckheimer and based on Walt Disney's theme park attraction of the same name. The film series serves as a major component of the titular media franchise",
+    "image": "movies/pirates_caribbean.jpg",
+    "banner": "movies_banner/pirates_caribbean.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "TR",
+    "cast": "Johnny Depp",
+    "year_of_production": "2024-11-07",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 228,
+    "created": "2025-06-19T23:09:27Z",
+    "slug": "pirates-of-the-caribbean",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 13,
+  "fields": {
+    "title": "Shoot 'Em Up",
+    "description": "Smith runs into a pregnant woman being pursued by killers. With the woman dead and the killers in pursuit, he fights to keep the newborn alive with the help of a prostitute and discovers a grim plot.",
+    "image": "movies/shootem_up.jpg",
+    "banner": "movies_banner/shootem_up.jpg",
+    "category": "romance",
+    "language": "english",
+    "status": "RA",
+    "cast": "Clive Owen",
+    "year_of_production": "2023-11-15",
+    "duration": 90,
+    "rating": 4.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 330,
+    "created": "2025-06-19T23:12:07Z",
+    "slug": "shoot-em-up",
+    "genres": [
+      4
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 14,
+  "fields": {
+    "title": "The Matrix",
+    "description": "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
+    "image": "movies/matrix.jpg",
+    "banner": "movies_banner/matrix.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Keanu Reeves",
+    "year_of_production": "2022-09-13",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 247,
+    "created": "2025-06-19T23:14:23Z",
+    "slug": "the-matrix",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 15,
+  "fields": {
+    "title": "Bad Boys",
+    "description": "Two hip detectives protect a witness to a murder while investigating a case of stolen heroin from the evidence storage room from their police precinct.",
+    "image": "movies/badboys.jpg",
+    "banner": "movies_banner/badboys.jpg",
+    "category": "comedy",
+    "language": "english",
+    "status": "TR",
+    "cast": "Will Smith",
+    "year_of_production": "2021-09-06",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 231,
+    "created": "2025-06-19T17:27:29Z",
+    "slug": "bad-boys",
+    "genres": [
+      3
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 16,
+  "fields": {
+    "title": "Slumdog Millionaire",
+    "description": "When a teenager from the slums of Mumbai is interrogated about his suspicious performance on a quiz show, he revisits various events from his past to explain how he knew all the answers.",
+    "image": "movies/slumdog_millionaire.jpg",
+    "banner": "movies_banner/slumdog_millionaire.jpg",
+    "category": "drama",
+    "language": "english",
+    "status": "MW",
+    "cast": "Dev Patel",
+    "year_of_production": "2025-06-10",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 198,
+    "created": "2025-06-19T23:18:02Z",
+    "slug": "slumdog-millionaire",
+    "genres": [
+      1
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 17,
+  "fields": {
+    "title": "Braveheart",
+    "description": "Scottish warrior William Wallace leads his countrymen in a rebellion to free his homeland from the tyranny of King Edward I of England.",
+    "image": "movies/braveheart.jpg",
+    "banner": "movies_banner/braveheart.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Mel Gibson",
+    "year_of_production": "2025-06-01",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 350,
+    "created": "2025-06-19T23:19:27Z",
+    "slug": "braveheart",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 18,
+  "fields": {
+    "title": "The Patriot",
+    "description": "Peaceful farmer Benjamin Martin is driven to lead the Colonial Militia during the American Revolution when a sadistic British officer murders his son.",
+    "image": "movies/patriot.jpg",
+    "banner": "movies_banner/patriot.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Mel Gibson",
+    "year_of_production": "2025-06-16",
+    "duration": 90,
+    "rating": 0.0,
+    "rating_count": 0,
+    "trailer_url": null,
+    "views_count": 252,
+    "created": "2025-06-19T23:21:42Z",
+    "slug": "the-patriot",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 19,
+  "fields": {
+    "title": "Gladiator",
+    "description": "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.",
+    "image": "movies/gladiator.jpg",
+    "banner": "movies_banner/gladiator.jpg",
+    "category": "action",
+    "language": "english",
+    "status": "MW",
+    "cast": "Russell Crowe",
+    "year_of_production": "2025-06-11",
+    "duration": 90,
+    "rating": 7.5,
+    "rating_count": 2,
+    "trailer_url": null,
+    "views_count": 738,
+    "created": "2025-06-19T23:22:31Z",
+    "slug": "gladiator",
+    "genres": [
+      2
+    ]
+  }
+},
+{
+  "model": "movie.movie",
+  "pk": 20,
+  "fields": {
+    "title": "sahar",
+    "description": "new movie",
+    "image": "movies/sahara.jpg",
+    "banner": "movies_banner/sahara.jpg",
+    "category": "action",
+    "language": "german",
+    "status": "RA",
+    "cast": "Mel Gibson",
+    "year_of_production": "2025-06-10",
+    "duration": 90,
+    "rating": 3.0,
+    "rating_count": 1,
+    "trailer_url": null,
+    "views_count": 756,
+    "created": "2025-06-20T00:55:18Z",
+    "slug": "sahar",
+    "genres": [
+      2
+    ]
+  }
+}
+]
